@@ -2,6 +2,6 @@ baseURL = 'https://example.org/'
 languageCode = 'en-us'
 title = 'My Thoughts'
 theme = 'ananke'
-copyright = 'Eric Hemmeter 2024'
+copyright = 'Eric Hemmeter'
 [params]
   subtitle = 'Mostly Mac, so other stuff'
