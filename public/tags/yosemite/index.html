@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+    
+      <link href="/tags/yosemite/index.xml" rel="alternate" type="application/rss+xml" title="My Thoughts" />
+      <link href="/tags/yosemite/index.xml" rel="feed" type="application/rss+xml" title="My Thoughts" />
+      
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/tags/yosemite/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/tags/yosemite/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Yosemite">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="website">
+
+  <meta itemprop="name" content="Yosemite">
+  <meta itemprop="datePublished" content="2015-05-05T21:06:11+00:00">
+  <meta itemprop="dateModified" content="2015-05-05T21:06:11+00:00">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Yosemite">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+
+  <header>
+    <div class="pb3-m pb6-l bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+      <div class="tc-l pv3 ph3 ph4-ns">
+        <h1 class="f2 f-subheadline-l fw2 light-silver mb0 lh-title">
+          Yosemite
+        </h1>
+        
+      </div>
+    </div>
+  </header>
+
+
+    <main class="pb7" role="main">
+      
+  <article class="cf pa3 pa4-m pa4-l">
+    <div class="measure-wide-l center f4 lh-copy nested-copy-line-height nested-links mid-gray">
+      <p>Below you will find pages that utilize the taxonomy term “Yosemite”</p>
+    </div>
+  </article>
+  <div class="mw8 center">
+    <section class="flex-ns flex-wrap justify-around mt5">
+      
+        <div class="relative w-100  mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/update-to-network-geektool-script-comments/" class="link black dim">
+        Update to network GeekTool script
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      <h4 id="heading"></h4>
+<p><a href="https://sneakypockets.wordpress.com/2019/07/29/shell-to-swift-with-a-bit-of-python/" title="">Shell to Swift with a bit of Python | My Thoughts</a> - <!-- raw HTML omitted -->Jul 1, 2019<!-- raw HTML omitted --></p>
+<p>[…] want to make this too long. So this will be an overview of the project. For years I have had a shell script that collected some network info and it was displayed on my desktop using NerdTool and then […]</p>
+<!-- raw HTML omitted -->
+    </div>
+    <a href="/posts/update-to-network-geektool-script-comments/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+  </div>
+</div>
+
+        </div>
+      
+        <div class="relative w-100  mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/update-to-network-geektool-script/" class="link black dim">
+        Update to network GeekTool script
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      <p>I have been seeing a lot of noise in my logs about IO80211ScanManager scanning for Wi-Fi networks constantly.  I finally noticed that it was triggered by system_profiler and realized that I was using system_profiler to find my current Wi-Fi network and what channel I was connected to. See the original here: <a href="https://sneakypockets.wordpress.com/2014/08/30/network-services-and-ips/">https://sneakypockets.wordpress.com/2014/08/30/network-services-and-ips/</a> So I changed how I find that data in my GeekTool script.  I also took the opportunity to simplify the whole thing a bit more.  Here is the new version: [code language=&ldquo;bash&rdquo;] #! /bin/bash connection=false services=$(networksetup -listallnetworkservices) while read service; do ip=$(networksetup -getinfo &ldquo;$service&rdquo; | grep &ldquo;IP address&rdquo; | grep -v &ldquo;IPv6&rdquo; | awk &lsquo;{print $3}&rsquo;) if [ &ldquo;$ip&rdquo; != &quot;&quot; ]; then echo &ldquo;$service : $ip&rdquo; connection=true if [ &ldquo;$service&rdquo; == &ldquo;Wi-Fi&rdquo; ]; then NetName=$(/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | grep SSID | grep -v BSSID | cut -d&quot;:&quot; -f2 | tr -d &lsquo;[[:space:]]&rsquo;) Channel=$(/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | grep channel | cut -d&quot;:&quot; -f2 | tr -d &lsquo;[[:space:]]&rsquo;) echo &ldquo;$NetName / $Channel&rdquo; fi fi done &laquo;&lt;&quot;$services&quot; if [ $connection = false ]; then echo &ldquo;No Connected Services&rdquo; else extIP=$(curl -s <a href="http://checkip.dyndns.org/">http://checkip.dyndns.org/</a> | sed &rsquo;s/[a-zA-Z&lt;&gt;/ :]//g&rsquo;) if [ &ldquo;$extIP&rdquo; != &quot;&quot; ]; then echo &ldquo;External IP: $extIP&rdquo; else echo &ldquo;No External Connection&rdquo; fi fi [/code] Instead of system_profiler the airport command to get the network name and channel.  This stopped the all the message in my logs. I also moved the name and channel logic into the main while read block. This prevents the name and channel from getting separated from the Wi-Fi network IP.</p>
+    </div>
+    <a href="/posts/update-to-network-geektool-script/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+  </div>
+</div>
+
+        </div>
+      
+    </section>
+  </div>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

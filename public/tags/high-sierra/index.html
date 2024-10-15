@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+    
+      <link href="/tags/high-sierra/index.xml" rel="alternate" type="application/rss+xml" title="My Thoughts" />
+      <link href="/tags/high-sierra/index.xml" rel="feed" type="application/rss+xml" title="My Thoughts" />
+      
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/tags/high-sierra/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/tags/high-sierra/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="High Sierra">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="website">
+
+  <meta itemprop="name" content="High Sierra">
+  <meta itemprop="datePublished" content="2018-02-02T20:28:49+00:00">
+  <meta itemprop="dateModified" content="2018-02-02T20:28:49+00:00">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="High Sierra">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+
+  <header>
+    <div class="pb3-m pb6-l bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+      <div class="tc-l pv3 ph3 ph4-ns">
+        <h1 class="f2 f-subheadline-l fw2 light-silver mb0 lh-title">
+          High Sierra
+        </h1>
+        
+      </div>
+    </div>
+  </header>
+
+
+    <main class="pb7" role="main">
+      
+  <article class="cf pa3 pa4-m pa4-l">
+    <div class="measure-wide-l center f4 lh-copy nested-copy-line-height nested-links mid-gray">
+      <p>Below you will find pages that utilize the taxonomy term “High Sierra”</p>
+    </div>
+  </article>
+  <div class="mw8 center">
+    <section class="flex-ns flex-wrap justify-around mt5">
+      
+        <div class="relative w-100  mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/setting-the-screen-saver-to-a-static-image/" class="link black dim">
+        Setting the Screen Saver to a static image
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      <p>On our Windows systems we have a static image as our screen saver and I wanted to match that on our Macs.  There are several options in the Screen Saver settings of System Preferences.  I needed to figure out how to set a default across all our Macs with a script.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2018/02/screen-shot-2018-02-02-at-1-55-51-pm.png" alt="Screen Shot 2018-02-02 at 1.55.51 PM.png">  We wanted a single image statically on the screen.  By making a folder with one image in it, we can use the slideshow options to show our single image. After setting things up the way I wanted, I looked around to see where the settings were stored.  You can use something like <a href="https://fsmonitor.com">FSMonitor</a> to watch what files are edited when you change things in System Preferences.  These settings are per user and per device, so they end up in ~/Library/ByHost/com.apple.screensaver.plist, ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist, and ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist.  If you select other options, you might not need all of these files. To work with this files, use <code>defaults -currentHost read [preference-domain]</code>. First look at com.apple.screensaver.plist:<code>$ defaults -currentHost read com.apple.screensaver { PrefsVersion = 100; idleTime = 1800; moduleDict =     { moduleName = iLifeSlideshows; path = &quot;/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver&quot;; type = 0; }; }</code>Then ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist:<code>defaults -currentHost read com.apple.ScreenSaver.iLifeSlideShows { styleKey = Classic; }</code>Then finally, ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist:<code>defaults -currentHost read com.apple.ScreenSaverPhotoChooser { CustomFolderDict =     { identifier = &quot;/Library/Screen Savers/CompanyName&quot;; name = CompanyName; }; LastViewedPhotoPath = &quot;&quot;; SelectedFolderPath = &quot;/Library/Screen Savers/CompanyName&quot;; SelectedSource = 4; }</code>To set these, we use a very similar command: <code>defaults -currentHost write [preference-domain] [key] [value]</code>. After some testing I&rsquo;ve found we just need:```
+#!/bin/sh
+defaults -currentHost write com.apple.screensaver moduleDict -dict moduleName iLifeSlideshows path &ldquo;/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver&rdquo; type 0
+defaults -currentHost write com.apple.ScreenSaver.iLifeSlideShows styleKey Classic
+defaults -currentHost write com.apple.ScreenSaverPhotoChooser SelectedFolderPath &ldquo;/Library/Screen Savers/CompanyName&rdquo;</p>
+    </div>
+    <a href="/posts/setting-the-screen-saver-to-a-static-image/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+  </div>
+</div>
+
+        </div>
+      
+        <div class="relative w-100  mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/automator-application-to-run-script-as-root-comments/" class="link black dim">
+        Automator application to run script as root
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      <h4 id="heading"></h4>
+<p><a href="http://rayleighwickfordlabour.org.uk" title="n.martin@rayleighwickfordlabour.org.uk">n.martin</a> - <!-- raw HTML omitted -->Dec 2, 2017<!-- raw HTML omitted --></p>
+<p>Heyas - it looks like you might be using Jamf from the last screenshot (jamfhelper?). If you&rsquo;re running Jamf Pro 10, you could put the installer policy in Self Service and get a URL that opens Self Service and runs that policy automatically: <a href="http://docs.jamf.com/10.0.0/jamf-pro/administrator-guide/Making">http://docs.jamf.com/10.0.0/jamf-pro/administrator-guide/Making</a>_Items_Available_to_Users_in_Jamf_Self_Service_for_macOS.html There&rsquo;s a section on that page; Item URLs An AppleScript with: do shell script &ldquo;open &quot; might work (haven&rsquo;t tested but would be really interested).</p>
+    </div>
+    <a href="/posts/automator-application-to-run-script-as-root-comments/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+  </div>
+</div>
+
+        </div>
+      
+        <div class="relative w-100  mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/automator-application-to-run-script-as-root/" class="link black dim">
+        Automator application to run script as root
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      <p>I was recently asked to create a shortcut on our users&rsquo; Desktops to kick off the High Sierra install. We are caching the installer through our management system. In the past I have created a shortcut to the installer on their Desktop, but that required them to click through the many continue buttons. This method will use the startosinstall script from <a href="https://github.com/bp88/JSS-Scripts/blob/master/OS_Upgrade.sh">Slack member @bp</a> to start the install with minimal user interaction. I wrap that shell script (with the appropriate modifications for my environment) in an Automator application, but to have the script run as root, I call it with Run AppleScript using the <code>do shell script ... with administrator privileges</code> form. <img src="https://sneakypockets.wordpress.com/wp-content/uploads/2017/12/automatorinstaller.png" alt="AutomatorInstaller.png"> The full AppleScript is</p>
+    </div>
+    <a href="/posts/automator-application-to-run-script-as-root/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+  </div>
+</div>
+
+        </div>
+      
+    </section>
+  </div>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sonoma on My Thoughts</title>
+    <link>http://localhost:1313/tags/sonoma/</link>
+    <description>Recent content in Sonoma on My Thoughts</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>Eric Hemmeter</copyright>
+    <lastBuildDate>Wed, 29 Nov 2023 01:51:20 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/sonoma/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Virtualizing macOS with copy/paste and drag &amp;amp; drop</title>
+      <link>http://localhost:1313/posts/virtualizing-macos-with-copy-paste-and-drag-drop-comments/</link>
+      <pubDate>Wed, 29 Nov 2023 01:51:20 +0000</pubDate>
+      <guid>http://localhost:1313/posts/virtualizing-macos-with-copy-paste-and-drag-drop-comments/</guid>
+      <description>&lt;h4 id=&#34;heading&#34;&gt;&lt;/h4&gt;&#xA;&lt;p&gt;&lt;a href=&#34;%22dricci@rma.edu%22&#34;&gt;Dan&lt;/a&gt; - &lt;!-- raw HTML omitted --&gt;Nov 3, 2023&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;&#xA;&lt;p&gt;How does this work with serial numbers? Can you enroll an Apple Silicon VM into an MDM for testing purposes?&lt;/p&gt;&#xA;&lt;!-- raw HTML omitted --&gt;&#xA;&lt;p&gt;No, I&amp;rsquo;m not aware of any way to do that on M# series Macs.&lt;/p&gt;&#xA;&lt;!-- raw HTML omitted --&gt;</description>
+    </item>
+    <item>
+      <title>Virtualizing macOS with copy/paste and drag &amp;amp; drop</title>
+      <link>http://localhost:1313/posts/virtualizing-macos-with-copy-paste-and-drag-drop/</link>
+      <pubDate>Wed, 29 Nov 2023 01:51:20 +0000</pubDate>
+      <guid>http://localhost:1313/posts/virtualizing-macos-with-copy-paste-and-drag-drop/</guid>
+      <description>&lt;p&gt;With Apple adding their &lt;a href=&#34;https://developer.apple.com/documentation/virtualization&#34;&gt;Virtualization&lt;/a&gt; &lt;a href=&#34;https://developer.apple.com/documentation/virtualization&#34;&gt;Framework&lt;/a&gt;, there are several options for virtualizing macOS (and others) on our M# based Macs. I use VMs for connecting to some of our customer networks that require full-tunnel VPN. One common complaint is that these don&amp;rsquo;t offer copy/paste or drag and drop from the host to or from the guest. A workaround for this is to use Apple&amp;rsquo;s Screen Sharing or Remote Desktop application to connect to the VM. Because of this, I like to use &lt;a href=&#34;https://github.com/cirruslabs/tart&#34;&gt;Tart&lt;/a&gt; as my VM software because it offers a no gui option. I have an AppleScript start it up in a particular way.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

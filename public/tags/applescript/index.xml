@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>AppleScript on My Thoughts</title>
+    <link>http://localhost:1313/tags/applescript/</link>
+    <description>Recent content in AppleScript on My Thoughts</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>Eric Hemmeter</copyright>
+    <lastBuildDate>Wed, 29 Nov 2023 01:51:20 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/applescript/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Virtualizing macOS with copy/paste and drag &amp;amp; drop</title>
+      <link>http://localhost:1313/posts/virtualizing-macos-with-copy-paste-and-drag-drop-comments/</link>
+      <pubDate>Wed, 29 Nov 2023 01:51:20 +0000</pubDate>
+      <guid>http://localhost:1313/posts/virtualizing-macos-with-copy-paste-and-drag-drop-comments/</guid>
+      <description>&lt;h4 id=&#34;heading&#34;&gt;&lt;/h4&gt;&#xA;&lt;p&gt;&lt;a href=&#34;%22dricci@rma.edu%22&#34;&gt;Dan&lt;/a&gt; - &lt;!-- raw HTML omitted --&gt;Nov 3, 2023&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;&#xA;&lt;p&gt;How does this work with serial numbers? Can you enroll an Apple Silicon VM into an MDM for testing purposes?&lt;/p&gt;&#xA;&lt;!-- raw HTML omitted --&gt;&#xA;&lt;p&gt;No, I&amp;rsquo;m not aware of any way to do that on M# series Macs.&lt;/p&gt;&#xA;&lt;!-- raw HTML omitted --&gt;</description>
+    </item>
+    <item>
+      <title>Virtualizing macOS with copy/paste and drag &amp;amp; drop</title>
+      <link>http://localhost:1313/posts/virtualizing-macos-with-copy-paste-and-drag-drop/</link>
+      <pubDate>Wed, 29 Nov 2023 01:51:20 +0000</pubDate>
+      <guid>http://localhost:1313/posts/virtualizing-macos-with-copy-paste-and-drag-drop/</guid>
+      <description>&lt;p&gt;With Apple adding their &lt;a href=&#34;https://developer.apple.com/documentation/virtualization&#34;&gt;Virtualization&lt;/a&gt; &lt;a href=&#34;https://developer.apple.com/documentation/virtualization&#34;&gt;Framework&lt;/a&gt;, there are several options for virtualizing macOS (and others) on our M# based Macs. I use VMs for connecting to some of our customer networks that require full-tunnel VPN. One common complaint is that these don&amp;rsquo;t offer copy/paste or drag and drop from the host to or from the guest. A workaround for this is to use Apple&amp;rsquo;s Screen Sharing or Remote Desktop application to connect to the VM. Because of this, I like to use &lt;a href=&#34;https://github.com/cirruslabs/tart&#34;&gt;Tart&lt;/a&gt; as my VM software because it offers a no gui option. I have an AppleScript start it up in a particular way.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Fun with AppleScript and Notes</title>
+      <link>http://localhost:1313/posts/fun-with-applescript-and-notes/</link>
+      <pubDate>Fri, 20 Dec 2019 16:05:53 +0000</pubDate>
+      <guid>http://localhost:1313/posts/fun-with-applescript-and-notes/</guid>
+      <description>&lt;p&gt;I have pretty large collection of movies ripped from my DVDs and a few Blu-Rays stored on a file server. Occasionally when I want to watch something old that we have, I&amp;rsquo;d rather borrow a Blu-Ray from our library to see it in better quality, but it is hard to remember what movies are DVD quality and which are Blu-Ray. The post will show how I collect that information and made it sync to my iPhone. To collect the resolution information I am using &lt;code&gt;mdls -name kMDItemPixelHeight $movie&lt;/code&gt; and &lt;code&gt;mdls -name kMDItemPixelWidth $movie&lt;/code&gt;. I initially thought about writing this to a static webpage, but didn&amp;rsquo;t want to go to the trouble of setting all that up.  I had visions of launchdaemons and shell scripts to automate it all, but that felt like too much work for a trivial want.  So I started thinking about other ways to get data available on the go and eventually remembered Notes.  That lead to a bit of research, including the always useful &lt;a href=&#34;https://www.macosxautomation.com/applescript/notes/02.html&#34;&gt;MacOSXAutomation&lt;/a&gt; and of course a &lt;a href=&#34;https://apple.stackexchange.com/questions/295569/can-an-applescript-write-to-a-notes-app-document&#34;&gt;StackExchange&lt;/a&gt; post. The fun part is using AppleScript to write to a note in Notes.app which then is synced through iCloud automatically. Notes.app notes use html for formatting which can be pretty powerful. In my case, I just need each entry on its own line. In AppleScript Editor I saved the following as a script and now double click it when I want to update the note.```&#xA;&lt;strong&gt;set&lt;/strong&gt; ss &lt;strong&gt;to&lt;/strong&gt; &amp;ldquo;cd /Volumes/External/Media/Movies&#xA;for movie in *.m*; do&#xA;height=$(mdls -name kMDItemPixelHeight \&amp;quot;$movie\&amp;rdquo; | awk &amp;lsquo;{print $NF}&amp;rsquo;)&#xA;width=$(mdls -name kMDItemPixelWidth \&amp;quot;$movie\&amp;quot; | awk &amp;lsquo;{print $NF}&amp;rsquo;)&#xA;echo \&amp;quot;&lt;!-- raw HTML omitted --&gt;${movie}, ${height}, ${width}&lt;!-- raw HTML omitted --&gt;\&amp;quot;&#xA;done&amp;quot;&#xA;&lt;strong&gt;set&lt;/strong&gt; notebody &lt;strong&gt;to&lt;/strong&gt; &lt;strong&gt;do shell script&lt;/strong&gt; ss&#xA;&lt;strong&gt;tell&lt;/strong&gt; &lt;em&gt;application&lt;/em&gt; &amp;ldquo;Notes&amp;rdquo;&#xA;** activate**&#xA;** tell** default account &lt;strong&gt;to&lt;/strong&gt; &lt;strong&gt;tell&lt;/strong&gt; &lt;em&gt;folder&lt;/em&gt; &amp;ldquo;Notes&amp;rdquo;&#xA;**  set** body &lt;strong&gt;of&lt;/strong&gt; &lt;em&gt;note&lt;/em&gt; &amp;ldquo;Movie Resolutions&amp;rdquo; &lt;strong&gt;to&lt;/strong&gt; notebody&#xA;** end** &lt;strong&gt;tell&lt;/strong&gt;&#xA;&lt;strong&gt;end&lt;/strong&gt; &lt;strong&gt;tell&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

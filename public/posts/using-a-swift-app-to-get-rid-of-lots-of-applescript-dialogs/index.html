@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Using a Swift app to get rid of lots of AppleScript dialogs | My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="There was recently a discussion in #bash in the MacAdmin Slack about better ways to handle multiple dialogs for gathering info from users or techs.  In my company&rsquo;s provisioning process we want to collect a number of things to be picked up by our inventory system (BigFix).  This started with a set of AppleScript Display Dialogs.
+
+This is not a great experience and gets worse as we try to make it less error prone (do you see the mistake?). To make this better for our techs, I wrote a relatively simple Swift application.  I didn&rsquo;t/don&rsquo;t have much Swift experience (just playing around in Playgrounds, a few simple tutorials), so I can&rsquo;t say this is the &ldquo;right&rdquo; way to do this, but it works for me/our process.">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/posts/using-a-swift-app-to-get-rid-of-lots-of-applescript-dialogs/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/posts/using-a-swift-app-to-get-rid-of-lots-of-applescript-dialogs/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Using a Swift app to get rid of lots of AppleScript dialogs">
+  <meta property="og:description" content="There was recently a discussion in #bash in the MacAdmin Slack about better ways to handle multiple dialogs for gathering info from users or techs. In my company’s provisioning process we want to collect a number of things to be picked up by our inventory system (BigFix). This started with a set of AppleScript Display Dialogs.
+This is not a great experience and gets worse as we try to make it less error prone (do you see the mistake?). To make this better for our techs, I wrote a relatively simple Swift application. I didn’t/don’t have much Swift experience (just playing around in Playgrounds, a few simple tutorials), so I can’t say this is the “right” way to do this, but it works for me/our process.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2019-04-15T13:17:32+00:00">
+    <meta property="article:modified_time" content="2019-04-15T13:17:32+00:00">
+    <meta property="article:tag" content="OS X General">
+    <meta property="article:tag" content="Shell Script">
+    <meta property="article:tag" content="Swift">
+
+  <meta itemprop="name" content="Using a Swift app to get rid of lots of AppleScript dialogs">
+  <meta itemprop="description" content="There was recently a discussion in #bash in the MacAdmin Slack about better ways to handle multiple dialogs for gathering info from users or techs. In my company’s provisioning process we want to collect a number of things to be picked up by our inventory system (BigFix). This started with a set of AppleScript Display Dialogs.
+This is not a great experience and gets worse as we try to make it less error prone (do you see the mistake?). To make this better for our techs, I wrote a relatively simple Swift application. I didn’t/don’t have much Swift experience (just playing around in Playgrounds, a few simple tutorials), so I can’t say this is the “right” way to do this, but it works for me/our process.">
+  <meta itemprop="datePublished" content="2019-04-15T13:17:32+00:00">
+  <meta itemprop="dateModified" content="2019-04-15T13:17:32+00:00">
+  <meta itemprop="wordCount" content="2024">
+  <meta itemprop="keywords" content="OS X General,Shell Script,Swift">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Using a Swift app to get rid of lots of AppleScript dialogs">
+  <meta name="twitter:description" content="There was recently a discussion in #bash in the MacAdmin Slack about better ways to handle multiple dialogs for gathering info from users or techs. In my company’s provisioning process we want to collect a number of things to be picked up by our inventory system (BigFix). This started with a set of AppleScript Display Dialogs.
+This is not a great experience and gets worse as we try to make it less error prone (do you see the mistake?). To make this better for our techs, I wrote a relatively simple Swift application. I didn’t/don’t have much Swift experience (just playing around in Playgrounds, a few simple tutorials), so I can’t say this is the “right” way to do this, but it works for me/our process.">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Using a Swift app to get rid of lots of AppleScript dialogs</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2019-04-15T13:17:32Z">April 15, 2019</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>There was recently a discussion in #bash in the <a href="https://macadmins.org">MacAdmin Slack</a> about better ways to handle multiple dialogs for gathering info from users or techs.  In my company&rsquo;s provisioning process we want to collect a number of things to be picked up by our inventory system (BigFix).  This started with a set of AppleScript Display Dialogs.</p>
+<p><img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/applescriptpopups.2019-04-13-12_40_20.gif" alt="AppleScriptPopUps.2019-04-13 12_40_20.gif"></p>
+<p>This is not a great experience and gets worse as we try to make it less error prone (do you see the mistake?). To make this better for our techs, I wrote a relatively simple Swift application.  I didn&rsquo;t/don&rsquo;t have much Swift experience (just playing around in Playgrounds, a few simple tutorials), so I can&rsquo;t say this is the &ldquo;right&rdquo; way to do this, but it works for me/our process.</p>
+<p>I will try to outline the process I used to make a app that has several input boxes and some pop up menus for entering data.  Some of the data is validated and then it is written to files on the Macs filesystem to be read later by our configuration system (Jamf Pro) and our inventory system.  At the end I&rsquo;ll show a way to incorporate this into a shell script as well.</p>
+<p><img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/screen-shot-2019-04-12-at-3.44.25-pm.png" alt="Screen Shot 2019-04-12 at 3.44.25 PM.png"></p>
+<p>I&rsquo;ll be using Xcode 10.2 to recreate this app for this post, but I don&rsquo;t think there is much that changed for this level of coding in recent versions. The project and all the code is available on <a href="https://github.com/ehemmete/buildinfo">GitHub</a>.  There is also the example <a href="https://github.com/ehemmete/buildinfo/blob/master/BuildInfo_AppleScript.sh">AppleScript</a> from above.</p>
+<p>Open Xcode and choose a Create a new Xcode project.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/screen-shot-2019-04-12-at-12.30.37-pm.png" alt="Screen Shot 2019-04-12 at 12.30.37 PM.png"></p>
+<p>Select macOS at the top and Cocoa App in the main area.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/screen-shot-2019-04-12-at-12.31.47-pm.png" alt="Screen Shot 2019-04-12 at 12.31.47 PM.png"></p>
+<p>Give it a name and select the appropriate developer account.  Confirm Swift is the language. Uncheck Use Storyboards.  This will NOT be a document based application and I haven&rsquo;t created tests for it.  Save the project somewhere.</p>
+<p><img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/screen-shot-2019-04-12-at-12.44.28-pm.png" alt="Screen Shot 2019-04-12 at 12.44.28 PM.png"></p>
+<p>Before we get to far, there is one thing we need to change at the project level.  If it isn&rsquo;t, select the project at the top of the structure on the left.  In the center area, select Capabilites and turn off App Sandbox.  We will be writing to other parts of the file system than sandboxing allows. <img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/screen-shot-2019-04-12-at-8.36.43-pm.png" alt="Screen Shot 2019-04-12 at 8.36.43 PM.png"></p>
+<p>In the main window select MainMenu.xib on the left.</p>
+<p>If you don&rsquo;t see a window in the center, click the window icon in the vertical bar between the file list and the main area.</p>
+<p>Add the labels, text fields, secure text field (shows bullets), and pop up buttons from the Library toolbar item.  Try to use the auto layout guides as much as possible.  If you have lots of input to collect, you can group them with a box.  If you need more choices in a pop up menu, use the menu item choice in the Library.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/screen-shot-2019-04-12-at-7.34.26-pm-4.png" alt="Screen Shot 2019-04-12 at 7.34.26 PM.png"></p>
+<p>Add a Reset and Submit button.</p>
+<p>Delete any Menus you don&rsquo;t want.</p>
+<p>This can be kind of frustrating at first.  I won&rsquo;t go into a lot of detail, but the Editor menu and the constraints pop up in the lower right can be helpful in getting things to look good/Mac like.  I like to use Reset to Suggested Constraints.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/screen-shot-2019-04-12-at-2.14.47-pm.png" alt="Screen Shot 2019-04-12 at 2.14.47 PM.png"></p>
+<p>One last thing, with the Submit button selected, go to the attributes inspector on the right and find the Key Equivalent field.  Click in there and press the Return key.  Now users can press return to start the Submit process.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/screen-shot-2019-04-12-at-8.41.27-pm-1.png" alt="Screen Shot 2019-04-12 at 8.41.27 PM.png"></p>
+<p>Now to get to some code.  We need to add outlets and actions for our menus, fields, and buttons.  Click the Assistant Editor button and open the AppDelegate.swift file next to our MainMenu.xib.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/screen-shot-2019-04-12-at-8.44.02-pm-1.png" alt="Screen Shot 2019-04-12 at 8.44.02 PM.png"></p>
+<p>Holding the control key, grab each text field and pop up menu and drag to the assistant editor under the <code>@IBOutlet week var window: NSWindow!</code> line.  In the pop, up add a good name for the fields.</p>
+<p><img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/creatingoutletsandactions.2019-04-13-10_03_22.gif" alt="CreatingOutletsAndActions.2019-04-13 10_03_22.gif"></p>
+<p>Do this for all the elements in the window, including the Reset button (we will get to that later).</p>
+<p><img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/screen-shot-2019-04-13-at-10.04.19-am.png" alt="Screen Shot 2019-04-13 at 10.04.19 AM.png"></p>
+<p>Then do the same for the buttons, but change the Connection type to Action and the Type to NSButton.</p>
+<p><img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/screen-shot-2019-04-12-at-8.50.51-pm.png" alt="Screen Shot 2019-04-12 at 8.50.51 PM.png"></p>
+<p>Now we are going to focus on the code side of things.</p>
+<p>In Swift our functions can go pretty much anwhere in the file. I added the following at the end of my AppDelegate.swift to write a string to a file:</p>
+<blockquote>
+<pre tabindex="0"><code>//Write a string to a file
+func writeToFile(file: String, data: String) {
+    let fileURL = URL(fileURLWithPath: file)
+    do {
+        try data.write(to: fileURL, atomically: true, encoding: .utf8)
+    } catch {
+        print(&#34;Writing \\(data) to \\(fileURL) failed&#34;)
+    }
+}
+</code></pre></blockquote>
+<p>Now when the data is filled in and the the Submit button is pushed, we can write this data to the file system.  In the submitButton action, we can add the steps to read the data from the window.  Text Field have a .stringValue property and Pop Up Button menus have a .titleOfSelectedItem property to get what we want.  I don&rsquo;t fully understand why, but I think, because it would be possible for a menu to have nothing selected, we need to treat the selected menu items a bit different.  I&rsquo;m sure there is a better way, but by ending .titleOfSelectedItem with a !, the warnings in Xcode go away :)</p>
+<blockquote>
+<pre tabindex="0"><code>let techID = techIDField.stringValue
+let assignedUser = assignedUserField.stringValue
+let topGunValue = topGunPopUp.titleOfSelectedItem!
+let computerName = computerNameField.stringValue
+let businessUnit = businessUnitPopUp.titleOfSelectedItem!
+let countryCode = countryCodePopUp.titleOfSelectedItem!
+</code></pre></blockquote>
+<p>Then we use the writeToFile function to write this all out.  Pass the path to the file you want to create and the string you want to write there.  I created a variable for the directory path so as to not have it repeated over and over. <code>let tagRoot = &quot;/Users/Shared/OrgName&quot;</code> Then we can quit the application with exit(0).  You can use other numbers if you want to be able to know from where the application was quit.</p>
+<blockquote>
+<pre tabindex="0"><code>writeToFile(file: &#34;\\(tagRoot)/BuildTech.txt&#34;, data: techID)
+writeToFile(file: &#34;\\(tagRoot)/AssignedUser.txt&#34;, data: assignedUser)
+writeToFile(file: &#34;\\(tagRoot)/TopGun.txt&#34;, data: topGunValue)
+writeToFile(file: &#34;\\(tagRoot)/ComputerName.txt&#34;, data: computerName)
+writeToFile(file: &#34;\\(tagRoot)/BusinessUnit.txt&#34;, data: businessUnit)
+writeToFile(file: &#34;\\(tagRoot)/CountryCode.txt&#34;, data: countryCode)
+</code></pre></blockquote>
+<p>The reset action will set all our fields and menus to some default. Basically we do the reverse of the submit action.  Instead of reading the values, we will set them.  We can use the same .stringValue property for the text fields, but need to use .selectItem(withTitle: String) property for the menu buttons.</p>
+<blockquote>
+<pre tabindex="0"><code>@IBAction func resetButton(\_ sender: NSButton) {
+        techIDField.stringValue = &#34;&#34;
+        assignedUserField.stringValue = &#34;&#34;
+        topGunPopUp.selectItem(withTitle: &#34;None&#34;)
+        computerNameField.stringValue = &#34;&#34;
+        businessUnitPopUp.selectItem(withTitle: &#34;Corporate&#34;)
+        countryCodePopUp.selectItem(withTitle: &#34;US&#34;)
+    }
+</code></pre></blockquote>
+<p>At this point, we can build our application and most of it works.  Reset should work and the menus/text fields are set-able.  But depending where you placed your tagRoot, you might not be able to submit.  If the folder doesn&rsquo;t exist, it won&rsquo;t work.  So let&rsquo;s discuss some setup for the app.  There is a built in function for <code>applicationDidFinishLaunching</code>, where we can do some setup.  In here we can make the tagRoot folder if necessary and initialize our pop ups to the most common values.  I&rsquo;m going to take advantage of the reset function and run that as part of the initialization.  To call our resetButton action, we need to pass it the &ldquo;sender&rdquo;.  This is why we created the Reset button outlet earlier. Finally, lets capture when this build process was started. Now if we run our application, the default choices should be selected.</p>
+<blockquote>
+<pre tabindex="0"><code>func applicationDidFinishLaunching(\_ aNotification: Notification) {
+       //Create build started
+        let currentDate = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = &#34;MM/dd/YY HH:mm&#34;
+        let buildStarted = dateFormatter.string(from: currentDate)
+        writeToFile(file: &#34;\\(tagRoot)/BuildStarted.txt&#34;, data: buildStarted) 
+
+        //Create folder for tags
+        let fileManager = FileManager.default
+        if  !fileManager.fileExists(atPath: tagRoot) {
+            do {
+                try fileManager.createDirectory(atPath: tagRoot, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print(&#34;Cannot create folder at \\(tagRoot)&#34;)
+            }
+        }
+        //Set our defaults
+        resetButton(resetButton)
+    }
+</code></pre></blockquote>
+<p>We should now have a working application that can collect data and write it to files.</p>
+<p><img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/screen-shot-2019-04-15-at-8.16.57-am.png" alt="Screen Shot 2019-04-15 at 8.16.57 AM.png"></p>
+<p>Another things we can do is create some error checking and data validation.  Maybe we want to only allow submission if all the fields are filled out.  We can add a check in the submitButton action to only proceed if they aren&rsquo;t empty.  The || means OR, so if the techIDField is empty OR the assigned UserField is empty OR &hellip;</p>
+<blockquote>
+<pre tabindex="0"><code>if techIDField.stringValue.isEmpty || assignedUserField.stringValue.isEmpty || computerNameField.stringValue.isEmpty {
+            return
+        }
+</code></pre></blockquote>
+<p>The return will drop the program out of this function and not continue until all the fields are full.  We can let the user know a few ways.  Maybe a label with instructions.  Or in the full version of this, there are other windows with all the needed messages and their .visible property controls when they are shown.  To add this, back in the MainMenu.xib, add a second window (from the Library) and put the message as a label. The window title is set in the attributes inspector on the right.  The Empty Fields window uses a Multi-line label.  Don&rsquo;t forget an OK button to close it.  In the assistant editor, drag an action for the OK button and an outlet for the whole window.</p>
+<p><img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/screen-shot-2019-04-13-at-10.51.17-am.png" alt="Screen Shot 2019-04-13 at 10.51.17 AM.png"></p>
+<p>Now we can add <code>emptyFieldsWindow.setIsVisible(true)</code> right before we return if some fields are empty. When the OK button is pressed, we reverse that with <code>emptyFieldsWindow.setIsVisible(false)</code>.  If you run your application now, the Empty Fields window will be visible at startup.  We can fix this in the attributes area for it, or in the initialization function where we set the menu items.</p>
+<blockquote>
+<pre tabindex="0"><code>if techIDField.stringValue.isEmpty || assignedUserField.stringValue.isEmpty || computerNameField.stringValue.isEmpty {
+            emptyFieldsWindow.setIsVisible(true)
+            return
+        }
+</code></pre></blockquote>
+<blockquote>
+<pre tabindex="0"><code>@IBAction func confirmEmptyFieldsButton(\_ sender: NSButton) {
+        emptyFieldsWindow.setIsVisible(false)
+    }
+</code></pre></blockquote>
+<p>Similarly we can do some error checking on the given computer name or the user names. In the live version of this, there is some swift code to run ldapsearch.  This may be a separate post at some point, but the basics of it are:</p>
+<blockquote>
+<pre tabindex="0"><code>let userLookup = Process()
+let userPipe = Pipe()
+        
+userLookup.launchPath = &#34;/usr/bin/ldapsearch&#34;
+userLookup.arguments = \[&#34;-LLL&#34;, &#34;-Q&#34;, &#34;-H&#34;, &#34;ldap://my.dc.domain.tld&#34;, &#34;-b&#34;, &#34;dc=my,dc=domain,dc=tld&#34;, &#34;(&amp;(objectCategory=Person)(objectClass=User)(sAMAccountName=\\(username)))&#34;, &#34;sAMAccountName&#34;, &#34;2&gt;/dev/null&#34;\]
+userLookup.standardOutput = userPipe
+userLookup.launch()
+userLookup.waitUntilExit()
+        
+let handle = userPipe.fileHandleForReading
+let data = handle.readDataToEndOfFile()
+let ldapOutput = String(data: data, encoding: String.Encoding.utf8)
+</code></pre></blockquote>
+<p>For our sample project we can make sure the computer name matches some criteria. Let&rsquo;s say it needs to be 8-15 characters and start with OrgMac. In our submit action, we can test computerName and return if it doesn&rsquo;t match our needs with the computer name field ready to recieve new input.  The &amp;&amp; means AND, so if the computername length greater than or equal to 8 AND less than or equal to 15 that would be true, but then the ! means NOT.  So if the length is not in the right range, OR it doesn&rsquo;t start with the right prefix, execution will stop.  We could/should also pop up another message window explaining the problem.</p>
+<blockquote>
+<pre tabindex="0"><code>if !(computerName.count &gt;= 8 &amp;&amp; computerName.count &lt;= 15) || !computerName.starts(with: &#34;OrgMac&#34;) {
+            computerNameField.becomeFirstResponder()
+            return
+        }
+</code></pre></blockquote>
+<p>As an exercise to the reader, how could you pre-fill the ComputerNameField with the serial number of the computer? This link has some info that will help: <a href="https://gist.github.com/leogdion/77f6143ecf793e1ba381917d4b3b286c">https://gist.github.com/leogdion/77f6143ecf793e1ba381917d4b3b286c</a></p>
+<p>Hopefully this has had enough to get started on a simple Swift application of your own. There are lots of parts here that can be reused/recombined.  In my production version, there are 6 error checking pop ups and an about window.  All names are validated against AD and group membership is checked to make sure the tech has rights to build a Mac.  There are 11 fields/pop ups that the tech fills in.</p>
+<p>There are many good guides available for getting started with Swift.  A few are linked below:</p>
+<p><a href="https://docs.swift.org/swift-book/GuidedTour/GuidedTour.html#//apple">https://docs.swift.org/swift-book/GuidedTour/GuidedTour.html#//apple</a>_ref/doc/uid/TP40014097-CH2-ID1</p>
+<p><a href="https://developer.apple.com/swift/resources/">https://developer.apple.com/swift/resources/</a></p>
+<p>To finish up, here is a way to incorporate this into a larger script.  This example will be a <a href="https://github.com/ehemmete/buildinfo/blob/master/BuildInfo_InUse.sh">shell script</a>, but the same could be done in Python or other language.  The <code>open</code> command can be told to wait for a process to exit with the <code>-W</code> option.  We can trigger our application from a shell script and then wait for it to close.  Then read in the values saved and use them later in the script.</p>
+<blockquote>
+<pre tabindex="0"><code>#!/bin/bash
+
+# Run the application and wait for it to finish
+/usr/bin/open -W -a /Applications/BuildInfo.app
+
+# Collect the output from the .app for use in this script
+tagRoot=&#34;/Users/Shared/OrgName&#34;
+
+BuildStarted=$(cat ${tagRoot}/BuildStarted.txt)
+BuildTech=$(cat ${tagRoot}/BuildTech.txt)
+AssignedUser=$(cat ${tagRoot}/AssignedUser.txt)
+TopGunStatus=$(cat ${tagRoot}/TopGun.txt)
+BusinessUnit=$(cat ${tagRoot}/BusinessUnit.txt)
+CountryCode=$(cat ${tagRoot}/CountryCode.txt)
+
+# Do the rest of the setup using these values
+.
+.
+.
+</code></pre></blockquote>
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/os-x-general/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">OS X General</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/shell-script/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Shell Script</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/swift/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Swift</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/posts/automator-application-to-run-script-as-root/">Automator application to run script as root</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/signing-installer-packages-with-automator/">Signing Installer Packages with Automator</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/mounting-file-shares-based-on-ad-group-membership-using-enterprise-connect/">Mounting File Shares Based on AD Group Membership using Enterprise Connect</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/using-ldapsearch-to-get-ad-data/">Using ldapsearch to get AD data</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/update-to-network-geektool-script/">Update to network GeekTool script</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/find-the-most-common-user-on-a-system/">Find the most common user on a system</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/new-folder-in-list-view/">New Folder in List View</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/setting-the-screen-saver-to-a-static-image/">Setting the Screen Saver to a static image</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/using-installer-choices-xml-to-modify-anyconnect-and-mcafee-deployments/">Using installer choices.xml to modify AnyConnect and McAfee deployments</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/macos-sierra-recovery-hd-changes/">macOS Sierra Recovery HD Changes</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/unhide-users-in-10-9-3/">Unhide /Users in 10.9.3</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/keyboard-shortcut-for-system-preferences/">Keyboard shortcut for System Preferences</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/control-if-a-window-opens-when-a-volume-mounts/">Control if a window opens when a volume mounts</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Virtualizing macOS with copy/paste and drag &amp;amp; drop | My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="With Apple adding their Virtualization Framework, there are several options for virtualizing macOS (and others) on our M# based Macs. I use VMs for connecting to some of our customer networks that require full-tunnel VPN. One common complaint is that these don&rsquo;t offer copy/paste or drag and drop from the host to or from the guest. A workaround for this is to use Apple&rsquo;s Screen Sharing or Remote Desktop application to connect to the VM. Because of this, I like to use Tart as my VM software because it offers a no gui option. I have an AppleScript start it up in a particular way.">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/posts/virtualizing-macos-with-copy-paste-and-drag-drop/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/posts/virtualizing-macos-with-copy-paste-and-drag-drop/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Virtualizing macOS with copy/paste and drag &amp; drop">
+  <meta property="og:description" content="With Apple adding their Virtualization Framework, there are several options for virtualizing macOS (and others) on our M# based Macs. I use VMs for connecting to some of our customer networks that require full-tunnel VPN. One common complaint is that these don’t offer copy/paste or drag and drop from the host to or from the guest. A workaround for this is to use Apple’s Screen Sharing or Remote Desktop application to connect to the VM. Because of this, I like to use Tart as my VM software because it offers a no gui option. I have an AppleScript start it up in a particular way.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2023-11-29T01:51:20+00:00">
+    <meta property="article:modified_time" content="2023-11-29T01:51:20+00:00">
+    <meta property="article:tag" content="AppleScript">
+    <meta property="article:tag" content="MacOS">
+    <meta property="article:tag" content="Sonoma">
+    <meta property="article:tag" content="Virtualization">
+
+  <meta itemprop="name" content="Virtualizing macOS with copy/paste and drag &amp; drop">
+  <meta itemprop="description" content="With Apple adding their Virtualization Framework, there are several options for virtualizing macOS (and others) on our M# based Macs. I use VMs for connecting to some of our customer networks that require full-tunnel VPN. One common complaint is that these don’t offer copy/paste or drag and drop from the host to or from the guest. A workaround for this is to use Apple’s Screen Sharing or Remote Desktop application to connect to the VM. Because of this, I like to use Tart as my VM software because it offers a no gui option. I have an AppleScript start it up in a particular way.">
+  <meta itemprop="datePublished" content="2023-11-29T01:51:20+00:00">
+  <meta itemprop="dateModified" content="2023-11-29T01:51:20+00:00">
+  <meta itemprop="wordCount" content="606">
+  <meta itemprop="keywords" content="AppleScript,MacOS,Sonoma,Virtualization">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Virtualizing macOS with copy/paste and drag &amp; drop">
+  <meta name="twitter:description" content="With Apple adding their Virtualization Framework, there are several options for virtualizing macOS (and others) on our M# based Macs. I use VMs for connecting to some of our customer networks that require full-tunnel VPN. One common complaint is that these don’t offer copy/paste or drag and drop from the host to or from the guest. A workaround for this is to use Apple’s Screen Sharing or Remote Desktop application to connect to the VM. Because of this, I like to use Tart as my VM software because it offers a no gui option. I have an AppleScript start it up in a particular way.">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Virtualizing macOS with copy/paste and drag &amp;amp; drop</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2023-11-29T01:51:20Z">November 29, 2023</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>With Apple adding their <a href="https://developer.apple.com/documentation/virtualization">Virtualization</a> <a href="https://developer.apple.com/documentation/virtualization">Framework</a>, there are several options for virtualizing macOS (and others) on our M# based Macs. I use VMs for connecting to some of our customer networks that require full-tunnel VPN. One common complaint is that these don&rsquo;t offer copy/paste or drag and drop from the host to or from the guest. A workaround for this is to use Apple&rsquo;s Screen Sharing or Remote Desktop application to connect to the VM. Because of this, I like to use <a href="https://github.com/cirruslabs/tart">Tart</a> as my VM software because it offers a no gui option. I have an AppleScript start it up in a particular way.</p>
+<p>To install Tart I used <code>brew install cirruslabs/cli/tart</code>. You can also download releases from their Github. Then to create the VM, <code>tart create &lt;name&gt; --from-ipsw &lt;path&gt;</code> will give you a VM with a ~44GB drive based on the ipsw file you pass in. You can get various ipsw files from Apple via the nice links on <a href="https://mrmacintosh.com/apple-silicon-m1-full-macos-restore-ipsw-firmware-files-database/">Mr. Macintosh&rsquo;s</a> site. For example I created mine with <code>tart create FullTunnel --from-ipsw ~/Downloads/UniversalMac_13.6_22G120_Restore.ipsw</code>.</p>
+<p>Then for the first launch, you can run <code>tart run FullTunnel</code> and go through the initial setup. Create an account and then in System Settings -&gt; General -&gt; Sharing, enable Screen Sharing or Remove Management. If you aren&rsquo;t already using Remote Desktop, just stick with Screen Sharing. Then in General -&gt; About, set the Name. Also go to System Settings -&gt; Network -&gt; Ethernet and set the IP to be static. I use whatever IP the VM got via DHCP. In my experience they are in the 192.168.65.0/24 subnet.</p>
+<p>Next we will configure our app to connect to this VM. If you are using Screen Sharing, click the plus sign in the toolbar, if you are using ARD, select Add by Address in the File menu. Authenticate to the new VM and say to Remember Password if using Screen Sharing. Once connected shut down the VM.</p>
+<p>To set things up for next time, open /System/Applications/Utilities/Script Editor.app and create a new script. My ARD script is below. Change all 4 references to &lsquo;FullTunnel&rsquo; to whatever you called the VM:</p>
+<pre tabindex="0"><code>set ready to do shell script &#34;/opt/homebrew/bin/tart list | awk &#39;/FullTunnel/ {print $4}&#39;&#34;
+if ready is not &#34;running&#34; then
+	do shell script &#34;/opt/homebrew/bin/tart run --no-graphics FullTunnel  &gt; /dev/null 2&gt;&amp;1 &amp;&#34;
+	repeat until ready = &#34;running&#34;
+		set ready to do shell script &#34;/opt/homebrew/bin/tart list | awk &#39;/FullTunnel/ {print $4}&#39;&#34;
+	end repeat
+	delay 10
+
+end if
+
+tell application &#34;Remote Desktop&#34;
+	activate
+	control computer &#34;FullTunnel&#34;
+ --This is the computer name
+end tell
+</code></pre><p>This first checks if the VM is already running with <code>tart list</code> and seeing if it is &ldquo;running&rdquo;. If not, then it starts it with <code>tart run --no-graphics FullTunnel</code> so the VM doesn&rsquo;t open a GUI window. Then the script waits while the VM boots up and then tells Remote Desktop to connect to that remote system.</p>
+<p>For Screen Sharing the script is slightly different. Again set the name instead of &lsquo;FullTunnel&rsquo; in 3 places and set the ip in the GetURL line for Screen Sharing :</p>
+<pre tabindex="0"><code>set ready to do shell script &#34;/opt/homebrew/bin/tart list | awk &#39;/FullTunnel/ {print $4}&#39;&#34;
+if ready is not &#34;running&#34; then
+
+	do shell script &#34;/opt/homebrew/bin/tart run --no-graphics FullTunnel  &gt; /dev/null 2&gt;&amp;1 &amp;&#34;
+	repeat until ready = &#34;running&#34;
+
+		set ready to do shell script &#34;/opt/homebrew/bin/tart list | awk &#39;/FullTunnel/ {print $4}&#39;&#34;
+	end repeat
+	delay 10
+end if
+
+tell application &#34;Screen Sharing&#34;
+
+	activate
+
+	GetURL &#34;vnc://192.168.65.4&#34;
+
+end tell
+</code></pre><p>In either case save the script as an Application somewhere useful and now you have a quick way to launch the VM and connect via the remote application. I generally trigger it with spotlight.</p>
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/applescript/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">AppleScript</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/macos/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">MacOS</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/sonoma/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Sonoma</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/virtualization/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Virtualization</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/posts/swift-mountshare-command-line-tool/">Swift mountshare command line tool</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/fun-with-applescript-and-notes/">Fun with AppleScript and Notes</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

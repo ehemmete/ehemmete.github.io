@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Fun with AppleScript and Notes | My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="I have pretty large collection of movies ripped from my DVDs and a few Blu-Rays stored on a file server. Occasionally when I want to watch something old that we have, I&rsquo;d rather borrow a Blu-Ray from our library to see it in better quality, but it is hard to remember what movies are DVD quality and which are Blu-Ray. The post will show how I collect that information and made it sync to my iPhone. To collect the resolution information I am using mdls -name kMDItemPixelHeight $movie and mdls -name kMDItemPixelWidth $movie. I initially thought about writing this to a static webpage, but didn&rsquo;t want to go to the trouble of setting all that up.  I had visions of launchdaemons and shell scripts to automate it all, but that felt like too much work for a trivial want.  So I started thinking about other ways to get data available on the go and eventually remembered Notes.  That lead to a bit of research, including the always useful MacOSXAutomation and of course a StackExchange post. The fun part is using AppleScript to write to a note in Notes.app which then is synced through iCloud automatically. Notes.app notes use html for formatting which can be pretty powerful. In my case, I just need each entry on its own line. In AppleScript Editor I saved the following as a script and now double click it when I want to update the note.```
+set ss to &ldquo;cd /Volumes/External/Media/Movies
+for movie in *.m*; do
+height=$(mdls -name kMDItemPixelHeight \&quot;$movie\&rdquo; | awk &lsquo;{print $NF}&rsquo;)
+width=$(mdls -name kMDItemPixelWidth \&quot;$movie\&quot; | awk &lsquo;{print $NF}&rsquo;)
+echo \&quot;${movie}, ${height}, ${width}\&quot;
+done&quot;
+set notebody to do shell script ss
+tell application &ldquo;Notes&rdquo;
+** activate**
+** tell** default account to tell folder &ldquo;Notes&rdquo;
+**  set** body of note &ldquo;Movie Resolutions&rdquo; to notebody
+** end** tell
+end tell">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/posts/fun-with-applescript-and-notes/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/posts/fun-with-applescript-and-notes/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Fun with AppleScript and Notes">
+  <meta property="og:description" content="I have pretty large collection of movies ripped from my DVDs and a few Blu-Rays stored on a file server. Occasionally when I want to watch something old that we have, I’d rather borrow a Blu-Ray from our library to see it in better quality, but it is hard to remember what movies are DVD quality and which are Blu-Ray. The post will show how I collect that information and made it sync to my iPhone. To collect the resolution information I am using mdls -name kMDItemPixelHeight $movie and mdls -name kMDItemPixelWidth $movie. I initially thought about writing this to a static webpage, but didn’t want to go to the trouble of setting all that up. I had visions of launchdaemons and shell scripts to automate it all, but that felt like too much work for a trivial want. So I started thinking about other ways to get data available on the go and eventually remembered Notes. That lead to a bit of research, including the always useful MacOSXAutomation and of course a StackExchange post. The fun part is using AppleScript to write to a note in Notes.app which then is synced through iCloud automatically. Notes.app notes use html for formatting which can be pretty powerful. In my case, I just need each entry on its own line. In AppleScript Editor I saved the following as a script and now double click it when I want to update the note.``` set ss to “cd /Volumes/External/Media/Movies for movie in *.m*; do height=$(mdls -name kMDItemPixelHeight \&#34;$movie\” | awk ‘{print $NF}’) width=$(mdls -name kMDItemPixelWidth \&#34;$movie\&#34; | awk ‘{print $NF}’) echo \&#34;${movie}, ${height}, ${width}\&#34; done&#34; set notebody to do shell script ss tell application “Notes” ** activate** ** tell** default account to tell folder “Notes” ** set** body of note “Movie Resolutions” to notebody ** end** tell end tell">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2019-12-20T16:05:53+00:00">
+    <meta property="article:modified_time" content="2019-12-20T16:05:53+00:00">
+    <meta property="article:tag" content="AppleScript">
+    <meta property="article:tag" content="Shell Script">
+
+  <meta itemprop="name" content="Fun with AppleScript and Notes">
+  <meta itemprop="description" content="I have pretty large collection of movies ripped from my DVDs and a few Blu-Rays stored on a file server. Occasionally when I want to watch something old that we have, I’d rather borrow a Blu-Ray from our library to see it in better quality, but it is hard to remember what movies are DVD quality and which are Blu-Ray. The post will show how I collect that information and made it sync to my iPhone. To collect the resolution information I am using mdls -name kMDItemPixelHeight $movie and mdls -name kMDItemPixelWidth $movie. I initially thought about writing this to a static webpage, but didn’t want to go to the trouble of setting all that up. I had visions of launchdaemons and shell scripts to automate it all, but that felt like too much work for a trivial want. So I started thinking about other ways to get data available on the go and eventually remembered Notes. That lead to a bit of research, including the always useful MacOSXAutomation and of course a StackExchange post. The fun part is using AppleScript to write to a note in Notes.app which then is synced through iCloud automatically. Notes.app notes use html for formatting which can be pretty powerful. In my case, I just need each entry on its own line. In AppleScript Editor I saved the following as a script and now double click it when I want to update the note.``` set ss to “cd /Volumes/External/Media/Movies for movie in *.m*; do height=$(mdls -name kMDItemPixelHeight \&#34;$movie\” | awk ‘{print $NF}’) width=$(mdls -name kMDItemPixelWidth \&#34;$movie\&#34; | awk ‘{print $NF}’) echo \&#34;${movie}, ${height}, ${width}\&#34; done&#34; set notebody to do shell script ss tell application “Notes” ** activate** ** tell** default account to tell folder “Notes” ** set** body of note “Movie Resolutions” to notebody ** end** tell end tell">
+  <meta itemprop="datePublished" content="2019-12-20T16:05:53+00:00">
+  <meta itemprop="dateModified" content="2019-12-20T16:05:53+00:00">
+  <meta itemprop="wordCount" content="359">
+  <meta itemprop="keywords" content="AppleScript,Shell Script">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Fun with AppleScript and Notes">
+  <meta name="twitter:description" content="I have pretty large collection of movies ripped from my DVDs and a few Blu-Rays stored on a file server. Occasionally when I want to watch something old that we have, I’d rather borrow a Blu-Ray from our library to see it in better quality, but it is hard to remember what movies are DVD quality and which are Blu-Ray. The post will show how I collect that information and made it sync to my iPhone. To collect the resolution information I am using mdls -name kMDItemPixelHeight $movie and mdls -name kMDItemPixelWidth $movie. I initially thought about writing this to a static webpage, but didn’t want to go to the trouble of setting all that up. I had visions of launchdaemons and shell scripts to automate it all, but that felt like too much work for a trivial want. So I started thinking about other ways to get data available on the go and eventually remembered Notes. That lead to a bit of research, including the always useful MacOSXAutomation and of course a StackExchange post. The fun part is using AppleScript to write to a note in Notes.app which then is synced through iCloud automatically. Notes.app notes use html for formatting which can be pretty powerful. In my case, I just need each entry on its own line. In AppleScript Editor I saved the following as a script and now double click it when I want to update the note.``` set ss to “cd /Volumes/External/Media/Movies for movie in *.m*; do height=$(mdls -name kMDItemPixelHeight \&#34;$movie\” | awk ‘{print $NF}’) width=$(mdls -name kMDItemPixelWidth \&#34;$movie\&#34; | awk ‘{print $NF}’) echo \&#34;${movie}, ${height}, ${width}\&#34; done&#34; set notebody to do shell script ss tell application “Notes” ** activate** ** tell** default account to tell folder “Notes” ** set** body of note “Movie Resolutions” to notebody ** end** tell end tell">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Fun with AppleScript and Notes</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2019-12-20T16:05:53Z">December 20, 2019</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>I have pretty large collection of movies ripped from my DVDs and a few Blu-Rays stored on a file server. Occasionally when I want to watch something old that we have, I&rsquo;d rather borrow a Blu-Ray from our library to see it in better quality, but it is hard to remember what movies are DVD quality and which are Blu-Ray. The post will show how I collect that information and made it sync to my iPhone. To collect the resolution information I am using <code>mdls -name kMDItemPixelHeight $movie</code> and <code>mdls -name kMDItemPixelWidth $movie</code>. I initially thought about writing this to a static webpage, but didn&rsquo;t want to go to the trouble of setting all that up.  I had visions of launchdaemons and shell scripts to automate it all, but that felt like too much work for a trivial want.  So I started thinking about other ways to get data available on the go and eventually remembered Notes.  That lead to a bit of research, including the always useful <a href="https://www.macosxautomation.com/applescript/notes/02.html">MacOSXAutomation</a> and of course a <a href="https://apple.stackexchange.com/questions/295569/can-an-applescript-write-to-a-notes-app-document">StackExchange</a> post. The fun part is using AppleScript to write to a note in Notes.app which then is synced through iCloud automatically. Notes.app notes use html for formatting which can be pretty powerful. In my case, I just need each entry on its own line. In AppleScript Editor I saved the following as a script and now double click it when I want to update the note.```
+<strong>set</strong> ss <strong>to</strong> &ldquo;cd /Volumes/External/Media/Movies
+for movie in *.m*; do
+height=$(mdls -name kMDItemPixelHeight \&quot;$movie\&rdquo; | awk &lsquo;{print $NF}&rsquo;)
+width=$(mdls -name kMDItemPixelWidth \&quot;$movie\&quot; | awk &lsquo;{print $NF}&rsquo;)
+echo \&quot;<!-- raw HTML omitted -->${movie}, ${height}, ${width}<!-- raw HTML omitted -->\&quot;
+done&quot;
+<strong>set</strong> notebody <strong>to</strong> <strong>do shell script</strong> ss
+<strong>tell</strong> <em>application</em> &ldquo;Notes&rdquo;
+** activate**
+** tell** default account <strong>to</strong> <strong>tell</strong> <em>folder</em> &ldquo;Notes&rdquo;
+**  set** body <strong>of</strong> <em>note</em> &ldquo;Movie Resolutions&rdquo; <strong>to</strong> notebody
+** end** <strong>tell</strong>
+<strong>end</strong> <strong>tell</strong></p>
+<pre tabindex="0"><code class="language-To" data-lang="To">
+*   *   My Notes setup is very simple.  One account synced through iCloud.  There are account options available in the Notes AppleScript library if you need them.
+    *   I can still automate running the AppleScript periodically with a LaunchAgent and the `open` command.  I&#39;d probably save the script as an Application for this use.
+</code></pre><ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/applescript/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">AppleScript</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/shell-script/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Shell Script</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/posts/using-a-swift-app-to-get-rid-of-lots-of-applescript-dialogs/">Using a Swift app to get rid of lots of AppleScript dialogs</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/setting-the-screen-saver-to-a-static-image/">Setting the Screen Saver to a static image</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/automator-application-to-run-script-as-root/">Automator application to run script as root</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/signing-installer-packages-with-automator/">Signing Installer Packages with Automator</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/mounting-file-shares-based-on-ad-group-membership-using-enterprise-connect/">Mounting File Shares Based on AD Group Membership using Enterprise Connect</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/using-ldapsearch-to-get-ad-data/">Using ldapsearch to get AD data</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/update-to-network-geektool-script/">Update to network GeekTool script</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/unhide-users-in-10-9-3/">Unhide /Users in 10.9.3</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/find-the-most-common-user-on-a-system/">Find the most common user on a system</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Using installer choices.xml to modify AnyConnect and McAfee deployments | My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="[edit] I have written a follow up article explaining how to wrap a vendor package and custom choices.xml in a wrapper package.[/edit] I have seen several posts on MacAdmin Slack asking for help deploying only components of big packages that the business wants or needs.  There are often several ways of handling this.  For example, from the McAfee ePO console, your admin can give you a Threat Prevention only installer instead of the full Endpoint Security package.  That is great if you can grab that yourself or the admin is helpful and able to get it for you.  This isn&rsquo;t always the case.  Another route is to install the full package and then uninstall the pieces that you don&rsquo;t want/need.  The Cisco AnyConnect Secure Mobility client installer does put uninstall scripts for each piece of the package in /opt/cisco/anyconnect/bin.  Both of these options can get your Macs to the end state you want, but they do have potential drawbacks/complications.  Using the Apple provided installer command line tool, we can see what options are available in these packages and then create a file to set which pieces we want.  This does take some work upfront, but we have all the tools we need.   To start we need an installer package that has choices.  We will focus on 2, Cisco&rsquo;s AnyConnect Secure Mobility Client 4.3.03086 and McAfee&rsquo;s Endpoint Security for Mac 10.2.1.  The choices show up in the GUI as selectable check boxes. [gallery ids=&ldquo;593,592&rdquo; type=&ldquo;rectangular&rdquo;] To see these choices from the command line and generate the information we need, we use the installer command with the ‑showChoicesXML option and pass it the package we are interested in.  Depending on the package, we may also need to specify the target, so I generally always do.  Be careful with the target.  Some installers will behave differently if some or all of the software is already installed. Installing on a clean system (maybe a VM you can role back) is a good way to see the real default behavior. Notice in the Cisco installer picture above, VPN and WebSecurity are unchecked and grayed out.  That is because my target already has those pieces installed on it. Our command is: installer ‑showChoicesXML ‑pkg /path/to/AnyConnect.pkg ‑target / That will print a bunch of information to standard out (the terminal window), so I will often redirect it to a file for saving and easier reading/searching like so: installer ‑showChoicesXML ‑pkg /path/to/AnyConnect.pkg ‑target / &gt; ~/Desktop/anyconnect_choices.xml That will output something like:[gist]542c05e12abb931746cc9811e60fe32d[/gist] Notice the individual dictionaries:[gist]14ad94a01a22cb98a5de9f6f36448247[/gist] This is one of the choices in the package (Umbrella).  Notice that the choiceIsSelected key is set to 1.  This means that by default on this volume (the target from the command), this choice will be installed.  We want to tell the installer command to skip this choice so we want to set choiceIsSelected to 0.  To do that we will create our own xml file that has the values we want.  The keys that we need are the choiceIdentifier, choiceIsSelected, and whether we want the choice to install (set value to 1) or not install (set value to 0).  Our file needs to be valid XML, so we need the appropriate file header.  You can create a valid XML file with the built in defaults command but for this, we can just copy the skeleton of our choices.xml we output from installer.[gist]c7002bd6dba90b136ff48b7a5a3b08eb[/gist] Now we need to add a dictionary for each setting we want to set in this form:[gist]e157915f4e47ce2583eaea71b682cd6d[/gist] We need to match the choiceIdentifier values to the those in the output of the installer command.  This AnyConnect package is setup nicely for easy reading.  Not all packages are (more on that later).  Then we have our choiceAttribute key (the key we want to change from default) set to &lsquo;selected&rsquo; and finally what we want to set that attribute to in the attributeSetting key (in this case we are setting it to 0 so this choice doesn&rsquo;t install). We only need to add entries for things we want to change from the default. In this case the choices file specifies settings for all possible choices. Once we build up our file, we get something like:[gist]8a34f3b7741de31e969e09247b3c31d9[/gist] This file tells installer to install VPN and skip the rest. Now we are ready to test the package.  To first verify that things look like they will work, we can use the ‑showChoicesAfterApplyingChangesXML option for installer and see what it will try to do. installer ‑showChoicesAfterApplyingChangesXML /path/to/choicesForAnyConnect.xml ‑pkg /path/to/AnyConnect.pkg ‑target / [gist]9f62ad9b678d20181f6365099c94169c[/gist]In this output we will see more than one entry for each choice.  In this output I have 3, enabled, visible, and selected.  Enabled means will the choice be allowed to be changed in the GUI and visible means will it even show up in the GUI.  We are only worried about selected as we aren&rsquo;t going to use the GUI.  So confirm that the choices we want to install have selected set to 1 and the choices we want to skip have selected set to 0. Once that all looks correct, we can actually deploy with ‑applyChoiceChangesXML.  That looks like installer ‑applyChoiceChangesXML /path/to/choicesForAnyConnect.xml ‑pkg /path/to/AnyConnect.pkg ‑target / This can be packaged up for deployment through a management tool pretty easily.  Basically you want to put the default package and your choices.xml into the packages resources area and then have a post install script that runs the above command.  There is a lot more detail possible, but that might be another blog post. Cisco&rsquo;s AnyConnect Secure Mobility installer is pretty friendly when it comes to repackaging/making choices.  If we try to apply the above to the McAfee Endpoint Security 10.2.1 installer, we will see some additional complexity. installer ‑showChoicesXML ‑pkg /path/to/McAfee_Endpoint_Security\ 10.2.1/1\ Source/McAfee-Endpoint-Security-for-Mac-10.2.1-RTW-standalone-2632.pkg ‑target / [gist]6c976037049b701741deb01bce7c660d[/gist] Notice that the choiceIdentifier is the not so helpful installer_choice_5.  We can still see what the choice is by the choiceTitle, but now when we create our choices.xml, we need to be very careful about which choices we are selecting and which we are not.  Your end result will look something like: [gist]c4cb8ef55ce6e11b108fa6a51e48c385[/gist] In this file, installer_choice_5 is the Firewall and installer_choice_6 is Web Control. For this type of package it can be important to save the output of showChoicesXML as a reference for which choice is which. This is an example of only putting in dictionaries for the choices we want to change.  I would say this is probably not a best practice as different systems can end up with different defaults, but it can work.">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/posts/using-installer-choices-xml-to-modify-anyconnect-and-mcafee-deployments/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/posts/using-installer-choices-xml-to-modify-anyconnect-and-mcafee-deployments/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Using installer choices.xml to modify AnyConnect and McAfee deployments">
+  <meta property="og:description" content="[edit] I have written a follow up article explaining how to wrap a vendor package and custom choices.xml in a wrapper package.[/edit] I have seen several posts on MacAdmin Slack asking for help deploying only components of big packages that the business wants or needs. There are often several ways of handling this. For example, from the McAfee ePO console, your admin can give you a Threat Prevention only installer instead of the full Endpoint Security package. That is great if you can grab that yourself or the admin is helpful and able to get it for you. This isn’t always the case. Another route is to install the full package and then uninstall the pieces that you don’t want/need. The Cisco AnyConnect Secure Mobility client installer does put uninstall scripts for each piece of the package in /opt/cisco/anyconnect/bin. Both of these options can get your Macs to the end state you want, but they do have potential drawbacks/complications. Using the Apple provided installer command line tool, we can see what options are available in these packages and then create a file to set which pieces we want. This does take some work upfront, but we have all the tools we need. To start we need an installer package that has choices. We will focus on 2, Cisco’s AnyConnect Secure Mobility Client 4.3.03086 and McAfee’s Endpoint Security for Mac 10.2.1. The choices show up in the GUI as selectable check boxes. [gallery ids=“593,592” type=“rectangular”] To see these choices from the command line and generate the information we need, we use the installer command with the ‑showChoicesXML option and pass it the package we are interested in. Depending on the package, we may also need to specify the target, so I generally always do. Be careful with the target. Some installers will behave differently if some or all of the software is already installed. Installing on a clean system (maybe a VM you can role back) is a good way to see the real default behavior. Notice in the Cisco installer picture above, VPN and WebSecurity are unchecked and grayed out. That is because my target already has those pieces installed on it. Our command is: installer ‑showChoicesXML ‑pkg /path/to/AnyConnect.pkg ‑target / That will print a bunch of information to standard out (the terminal window), so I will often redirect it to a file for saving and easier reading/searching like so: installer ‑showChoicesXML ‑pkg /path/to/AnyConnect.pkg ‑target / &gt; ~/Desktop/anyconnect_choices.xml That will output something like:[gist]542c05e12abb931746cc9811e60fe32d[/gist] Notice the individual dictionaries:[gist]14ad94a01a22cb98a5de9f6f36448247[/gist] This is one of the choices in the package (Umbrella). Notice that the choiceIsSelected key is set to 1. This means that by default on this volume (the target from the command), this choice will be installed. We want to tell the installer command to skip this choice so we want to set choiceIsSelected to 0. To do that we will create our own xml file that has the values we want. The keys that we need are the choiceIdentifier, choiceIsSelected, and whether we want the choice to install (set value to 1) or not install (set value to 0). Our file needs to be valid XML, so we need the appropriate file header. You can create a valid XML file with the built in defaults command but for this, we can just copy the skeleton of our choices.xml we output from installer.[gist]c7002bd6dba90b136ff48b7a5a3b08eb[/gist] Now we need to add a dictionary for each setting we want to set in this form:[gist]e157915f4e47ce2583eaea71b682cd6d[/gist] We need to match the choiceIdentifier values to the those in the output of the installer command. This AnyConnect package is setup nicely for easy reading. Not all packages are (more on that later). Then we have our choiceAttribute key (the key we want to change from default) set to ‘selected’ and finally what we want to set that attribute to in the attributeSetting key (in this case we are setting it to 0 so this choice doesn’t install). We only need to add entries for things we want to change from the default. In this case the choices file specifies settings for all possible choices. Once we build up our file, we get something like:[gist]8a34f3b7741de31e969e09247b3c31d9[/gist] This file tells installer to install VPN and skip the rest. Now we are ready to test the package. To first verify that things look like they will work, we can use the ‑showChoicesAfterApplyingChangesXML option for installer and see what it will try to do. installer ‑showChoicesAfterApplyingChangesXML /path/to/choicesForAnyConnect.xml ‑pkg /path/to/AnyConnect.pkg ‑target / [gist]9f62ad9b678d20181f6365099c94169c[/gist]In this output we will see more than one entry for each choice. In this output I have 3, enabled, visible, and selected. Enabled means will the choice be allowed to be changed in the GUI and visible means will it even show up in the GUI. We are only worried about selected as we aren’t going to use the GUI. So confirm that the choices we want to install have selected set to 1 and the choices we want to skip have selected set to 0. Once that all looks correct, we can actually deploy with ‑applyChoiceChangesXML. That looks like installer ‑applyChoiceChangesXML /path/to/choicesForAnyConnect.xml ‑pkg /path/to/AnyConnect.pkg ‑target / This can be packaged up for deployment through a management tool pretty easily. Basically you want to put the default package and your choices.xml into the packages resources area and then have a post install script that runs the above command. There is a lot more detail possible, but that might be another blog post. Cisco’s AnyConnect Secure Mobility installer is pretty friendly when it comes to repackaging/making choices. If we try to apply the above to the McAfee Endpoint Security 10.2.1 installer, we will see some additional complexity. installer ‑showChoicesXML ‑pkg /path/to/McAfee_Endpoint_Security\ 10.2.1/1\ Source/McAfee-Endpoint-Security-for-Mac-10.2.1-RTW-standalone-2632.pkg ‑target / [gist]6c976037049b701741deb01bce7c660d[/gist] Notice that the choiceIdentifier is the not so helpful installer_choice_5. We can still see what the choice is by the choiceTitle, but now when we create our choices.xml, we need to be very careful about which choices we are selecting and which we are not. Your end result will look something like: [gist]c4cb8ef55ce6e11b108fa6a51e48c385[/gist] In this file, installer_choice_5 is the Firewall and installer_choice_6 is Web Control. For this type of package it can be important to save the output of showChoicesXML as a reference for which choice is which. This is an example of only putting in dictionaries for the choices we want to change. I would say this is probably not a best practice as different systems can end up with different defaults, but it can work.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2017-07-27T01:37:58+00:00">
+    <meta property="article:modified_time" content="2017-07-27T01:37:58+00:00">
+    <meta property="article:tag" content="OS X General">
+    <meta property="article:tag" content="Packaging">
+
+  <meta itemprop="name" content="Using installer choices.xml to modify AnyConnect and McAfee deployments">
+  <meta itemprop="description" content="[edit] I have written a follow up article explaining how to wrap a vendor package and custom choices.xml in a wrapper package.[/edit] I have seen several posts on MacAdmin Slack asking for help deploying only components of big packages that the business wants or needs. There are often several ways of handling this. For example, from the McAfee ePO console, your admin can give you a Threat Prevention only installer instead of the full Endpoint Security package. That is great if you can grab that yourself or the admin is helpful and able to get it for you. This isn’t always the case. Another route is to install the full package and then uninstall the pieces that you don’t want/need. The Cisco AnyConnect Secure Mobility client installer does put uninstall scripts for each piece of the package in /opt/cisco/anyconnect/bin. Both of these options can get your Macs to the end state you want, but they do have potential drawbacks/complications. Using the Apple provided installer command line tool, we can see what options are available in these packages and then create a file to set which pieces we want. This does take some work upfront, but we have all the tools we need. To start we need an installer package that has choices. We will focus on 2, Cisco’s AnyConnect Secure Mobility Client 4.3.03086 and McAfee’s Endpoint Security for Mac 10.2.1. The choices show up in the GUI as selectable check boxes. [gallery ids=“593,592” type=“rectangular”] To see these choices from the command line and generate the information we need, we use the installer command with the ‑showChoicesXML option and pass it the package we are interested in. Depending on the package, we may also need to specify the target, so I generally always do. Be careful with the target. Some installers will behave differently if some or all of the software is already installed. Installing on a clean system (maybe a VM you can role back) is a good way to see the real default behavior. Notice in the Cisco installer picture above, VPN and WebSecurity are unchecked and grayed out. That is because my target already has those pieces installed on it. Our command is: installer ‑showChoicesXML ‑pkg /path/to/AnyConnect.pkg ‑target / That will print a bunch of information to standard out (the terminal window), so I will often redirect it to a file for saving and easier reading/searching like so: installer ‑showChoicesXML ‑pkg /path/to/AnyConnect.pkg ‑target / &gt; ~/Desktop/anyconnect_choices.xml That will output something like:[gist]542c05e12abb931746cc9811e60fe32d[/gist] Notice the individual dictionaries:[gist]14ad94a01a22cb98a5de9f6f36448247[/gist] This is one of the choices in the package (Umbrella). Notice that the choiceIsSelected key is set to 1. This means that by default on this volume (the target from the command), this choice will be installed. We want to tell the installer command to skip this choice so we want to set choiceIsSelected to 0. To do that we will create our own xml file that has the values we want. The keys that we need are the choiceIdentifier, choiceIsSelected, and whether we want the choice to install (set value to 1) or not install (set value to 0). Our file needs to be valid XML, so we need the appropriate file header. You can create a valid XML file with the built in defaults command but for this, we can just copy the skeleton of our choices.xml we output from installer.[gist]c7002bd6dba90b136ff48b7a5a3b08eb[/gist] Now we need to add a dictionary for each setting we want to set in this form:[gist]e157915f4e47ce2583eaea71b682cd6d[/gist] We need to match the choiceIdentifier values to the those in the output of the installer command. This AnyConnect package is setup nicely for easy reading. Not all packages are (more on that later). Then we have our choiceAttribute key (the key we want to change from default) set to ‘selected’ and finally what we want to set that attribute to in the attributeSetting key (in this case we are setting it to 0 so this choice doesn’t install). We only need to add entries for things we want to change from the default. In this case the choices file specifies settings for all possible choices. Once we build up our file, we get something like:[gist]8a34f3b7741de31e969e09247b3c31d9[/gist] This file tells installer to install VPN and skip the rest. Now we are ready to test the package. To first verify that things look like they will work, we can use the ‑showChoicesAfterApplyingChangesXML option for installer and see what it will try to do. installer ‑showChoicesAfterApplyingChangesXML /path/to/choicesForAnyConnect.xml ‑pkg /path/to/AnyConnect.pkg ‑target / [gist]9f62ad9b678d20181f6365099c94169c[/gist]In this output we will see more than one entry for each choice. In this output I have 3, enabled, visible, and selected. Enabled means will the choice be allowed to be changed in the GUI and visible means will it even show up in the GUI. We are only worried about selected as we aren’t going to use the GUI. So confirm that the choices we want to install have selected set to 1 and the choices we want to skip have selected set to 0. Once that all looks correct, we can actually deploy with ‑applyChoiceChangesXML. That looks like installer ‑applyChoiceChangesXML /path/to/choicesForAnyConnect.xml ‑pkg /path/to/AnyConnect.pkg ‑target / This can be packaged up for deployment through a management tool pretty easily. Basically you want to put the default package and your choices.xml into the packages resources area and then have a post install script that runs the above command. There is a lot more detail possible, but that might be another blog post. Cisco’s AnyConnect Secure Mobility installer is pretty friendly when it comes to repackaging/making choices. If we try to apply the above to the McAfee Endpoint Security 10.2.1 installer, we will see some additional complexity. installer ‑showChoicesXML ‑pkg /path/to/McAfee_Endpoint_Security\ 10.2.1/1\ Source/McAfee-Endpoint-Security-for-Mac-10.2.1-RTW-standalone-2632.pkg ‑target / [gist]6c976037049b701741deb01bce7c660d[/gist] Notice that the choiceIdentifier is the not so helpful installer_choice_5. We can still see what the choice is by the choiceTitle, but now when we create our choices.xml, we need to be very careful about which choices we are selecting and which we are not. Your end result will look something like: [gist]c4cb8ef55ce6e11b108fa6a51e48c385[/gist] In this file, installer_choice_5 is the Firewall and installer_choice_6 is Web Control. For this type of package it can be important to save the output of showChoicesXML as a reference for which choice is which. This is an example of only putting in dictionaries for the choices we want to change. I would say this is probably not a best practice as different systems can end up with different defaults, but it can work.">
+  <meta itemprop="datePublished" content="2017-07-27T01:37:58+00:00">
+  <meta itemprop="dateModified" content="2017-07-27T01:37:58+00:00">
+  <meta itemprop="wordCount" content="1078">
+  <meta itemprop="keywords" content="OS X General,Packaging">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Using installer choices.xml to modify AnyConnect and McAfee deployments">
+  <meta name="twitter:description" content="[edit] I have written a follow up article explaining how to wrap a vendor package and custom choices.xml in a wrapper package.[/edit] I have seen several posts on MacAdmin Slack asking for help deploying only components of big packages that the business wants or needs. There are often several ways of handling this. For example, from the McAfee ePO console, your admin can give you a Threat Prevention only installer instead of the full Endpoint Security package. That is great if you can grab that yourself or the admin is helpful and able to get it for you. This isn’t always the case. Another route is to install the full package and then uninstall the pieces that you don’t want/need. The Cisco AnyConnect Secure Mobility client installer does put uninstall scripts for each piece of the package in /opt/cisco/anyconnect/bin. Both of these options can get your Macs to the end state you want, but they do have potential drawbacks/complications. Using the Apple provided installer command line tool, we can see what options are available in these packages and then create a file to set which pieces we want. This does take some work upfront, but we have all the tools we need. To start we need an installer package that has choices. We will focus on 2, Cisco’s AnyConnect Secure Mobility Client 4.3.03086 and McAfee’s Endpoint Security for Mac 10.2.1. The choices show up in the GUI as selectable check boxes. [gallery ids=“593,592” type=“rectangular”] To see these choices from the command line and generate the information we need, we use the installer command with the ‑showChoicesXML option and pass it the package we are interested in. Depending on the package, we may also need to specify the target, so I generally always do. Be careful with the target. Some installers will behave differently if some or all of the software is already installed. Installing on a clean system (maybe a VM you can role back) is a good way to see the real default behavior. Notice in the Cisco installer picture above, VPN and WebSecurity are unchecked and grayed out. That is because my target already has those pieces installed on it. Our command is: installer ‑showChoicesXML ‑pkg /path/to/AnyConnect.pkg ‑target / That will print a bunch of information to standard out (the terminal window), so I will often redirect it to a file for saving and easier reading/searching like so: installer ‑showChoicesXML ‑pkg /path/to/AnyConnect.pkg ‑target / &gt; ~/Desktop/anyconnect_choices.xml That will output something like:[gist]542c05e12abb931746cc9811e60fe32d[/gist] Notice the individual dictionaries:[gist]14ad94a01a22cb98a5de9f6f36448247[/gist] This is one of the choices in the package (Umbrella). Notice that the choiceIsSelected key is set to 1. This means that by default on this volume (the target from the command), this choice will be installed. We want to tell the installer command to skip this choice so we want to set choiceIsSelected to 0. To do that we will create our own xml file that has the values we want. The keys that we need are the choiceIdentifier, choiceIsSelected, and whether we want the choice to install (set value to 1) or not install (set value to 0). Our file needs to be valid XML, so we need the appropriate file header. You can create a valid XML file with the built in defaults command but for this, we can just copy the skeleton of our choices.xml we output from installer.[gist]c7002bd6dba90b136ff48b7a5a3b08eb[/gist] Now we need to add a dictionary for each setting we want to set in this form:[gist]e157915f4e47ce2583eaea71b682cd6d[/gist] We need to match the choiceIdentifier values to the those in the output of the installer command. This AnyConnect package is setup nicely for easy reading. Not all packages are (more on that later). Then we have our choiceAttribute key (the key we want to change from default) set to ‘selected’ and finally what we want to set that attribute to in the attributeSetting key (in this case we are setting it to 0 so this choice doesn’t install). We only need to add entries for things we want to change from the default. In this case the choices file specifies settings for all possible choices. Once we build up our file, we get something like:[gist]8a34f3b7741de31e969e09247b3c31d9[/gist] This file tells installer to install VPN and skip the rest. Now we are ready to test the package. To first verify that things look like they will work, we can use the ‑showChoicesAfterApplyingChangesXML option for installer and see what it will try to do. installer ‑showChoicesAfterApplyingChangesXML /path/to/choicesForAnyConnect.xml ‑pkg /path/to/AnyConnect.pkg ‑target / [gist]9f62ad9b678d20181f6365099c94169c[/gist]In this output we will see more than one entry for each choice. In this output I have 3, enabled, visible, and selected. Enabled means will the choice be allowed to be changed in the GUI and visible means will it even show up in the GUI. We are only worried about selected as we aren’t going to use the GUI. So confirm that the choices we want to install have selected set to 1 and the choices we want to skip have selected set to 0. Once that all looks correct, we can actually deploy with ‑applyChoiceChangesXML. That looks like installer ‑applyChoiceChangesXML /path/to/choicesForAnyConnect.xml ‑pkg /path/to/AnyConnect.pkg ‑target / This can be packaged up for deployment through a management tool pretty easily. Basically you want to put the default package and your choices.xml into the packages resources area and then have a post install script that runs the above command. There is a lot more detail possible, but that might be another blog post. Cisco’s AnyConnect Secure Mobility installer is pretty friendly when it comes to repackaging/making choices. If we try to apply the above to the McAfee Endpoint Security 10.2.1 installer, we will see some additional complexity. installer ‑showChoicesXML ‑pkg /path/to/McAfee_Endpoint_Security\ 10.2.1/1\ Source/McAfee-Endpoint-Security-for-Mac-10.2.1-RTW-standalone-2632.pkg ‑target / [gist]6c976037049b701741deb01bce7c660d[/gist] Notice that the choiceIdentifier is the not so helpful installer_choice_5. We can still see what the choice is by the choiceTitle, but now when we create our choices.xml, we need to be very careful about which choices we are selecting and which we are not. Your end result will look something like: [gist]c4cb8ef55ce6e11b108fa6a51e48c385[/gist] In this file, installer_choice_5 is the Firewall and installer_choice_6 is Web Control. For this type of package it can be important to save the output of showChoicesXML as a reference for which choice is which. This is an example of only putting in dictionaries for the choices we want to change. I would say this is probably not a best practice as different systems can end up with different defaults, but it can work.">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Using installer choices.xml to modify AnyConnect and McAfee deployments</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2017-07-27T01:37:58Z">July 27, 2017</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>[edit] I have written a follow up article explaining how to wrap a vendor package and custom choices.xml in a <a href="https://sneakypockets.wordpress.com/2020/03/17/creating-a-wrapper-package-for-a-choices-xml-file/">wrapper package</a>.[/edit] I have seen several posts on <a href="https://macadmins.herokuapp.com">MacAdmin Slack</a> asking for help deploying only components of big packages that the business wants or needs.  There are often several ways of handling this.  For example, from the McAfee ePO console, your admin can give you a Threat Prevention only installer instead of the full Endpoint Security package.  That is great if you can grab that yourself or the admin is helpful and able to get it for you.  This isn&rsquo;t always the case.  Another route is to install the full package and then uninstall the pieces that you don&rsquo;t want/need.  The Cisco AnyConnect Secure Mobility client installer does put uninstall scripts for each piece of the package in /opt/cisco/anyconnect/bin.  Both of these options can get your Macs to the end state you want, but they do have potential drawbacks/complications.  Using the Apple provided installer command line tool, we can see what options are available in these packages and then create a file to set which pieces we want.  This does take some work upfront, but we have all the tools we need.   To start we need an installer package that has choices.  We will focus on 2, Cisco&rsquo;s AnyConnect Secure Mobility Client 4.3.03086 and McAfee&rsquo;s Endpoint Security for Mac 10.2.1.  The choices show up in the GUI as selectable check boxes. [gallery ids=&ldquo;593,592&rdquo; type=&ldquo;rectangular&rdquo;] To see these choices from the command line and generate the information we need, we use the installer command with the <code>‑showChoicesXML</code> option and pass it the package we are interested in.  Depending on the package, we may also need to specify the target, so I generally always do.  Be careful with the target.  Some installers will behave differently if some or all of the software is already installed. Installing on a clean system (maybe a VM you can role back) is a good way to see the real default behavior. Notice in the Cisco installer picture above, VPN and WebSecurity are unchecked and grayed out.  That is because my target already has those pieces installed on it. Our command is: <code>installer ‑showChoicesXML ‑pkg /path/to/AnyConnect.pkg ‑target /</code> That will print a bunch of information to standard out (the terminal window), so I will often redirect it to a file for saving and easier reading/searching like so: <code>installer ‑showChoicesXML ‑pkg /path/to/AnyConnect.pkg ‑target / &gt; ~/Desktop/anyconnect_choices.xml</code> That will output something like:[gist]542c05e12abb931746cc9811e60fe32d[/gist] Notice the individual dictionaries:[gist]14ad94a01a22cb98a5de9f6f36448247[/gist] This is one of the choices in the package (Umbrella).  Notice that the choiceIsSelected key is set to 1.  This means that by default on this volume (the target from the command), this choice will be installed.  We want to tell the installer command to skip this choice so we want to set choiceIsSelected to 0.  To do that we will create our own xml file that has the values we want.  The keys that we need are the choiceIdentifier, choiceIsSelected, and whether we want the choice to install (set value to 1) or not install (set value to 0).  Our file needs to be valid XML, so we need the appropriate file header.  You can create a valid XML file with the built in defaults command but for this, we can just copy the skeleton of our choices.xml we output from installer.[gist]c7002bd6dba90b136ff48b7a5a3b08eb[/gist] Now we need to add a dictionary for each setting we want to set in this form:[gist]e157915f4e47ce2583eaea71b682cd6d[/gist] We need to match the choiceIdentifier values to the those in the output of the installer command.  This AnyConnect package is setup nicely for easy reading.  Not all packages are (more on that later).  Then we have our choiceAttribute key (the key we want to change from default) set to &lsquo;selected&rsquo; and finally what we want to set that attribute to in the attributeSetting key (in this case we are setting it to 0 so this choice doesn&rsquo;t install). We only need to add entries for things we want to change from the default. In this case the choices file specifies settings for all possible choices. Once we build up our file, we get something like:[gist]8a34f3b7741de31e969e09247b3c31d9[/gist] This file tells <code>installer</code> to install VPN and skip the rest. Now we are ready to test the package.  To first verify that things look like they will work, we can use the <code>‑showChoicesAfterApplyingChangesXML</code> option for installer and see what it will try to do. <code>installer ‑showChoicesAfterApplyingChangesXML /path/to/choicesForAnyConnect.xml ‑pkg /path/to/AnyConnect.pkg ‑target /</code> [gist]9f62ad9b678d20181f6365099c94169c[/gist]In this output we will see more than one entry for each choice.  In this output I have 3, enabled, visible, and selected.  Enabled means will the choice be allowed to be changed in the GUI and visible means will it even show up in the GUI.  We are only worried about selected as we aren&rsquo;t going to use the GUI.  So confirm that the choices we want to install have selected set to 1 and the choices we want to skip have selected set to 0. Once that all looks correct, we can actually deploy with <code>‑applyChoiceChangesXML</code>.  That looks like <code>installer ‑applyChoiceChangesXML /path/to/choicesForAnyConnect.xml ‑pkg /path/to/AnyConnect.pkg ‑target /</code> This can be packaged up for deployment through a management tool pretty easily.  Basically you want to put the default package and your choices.xml into the packages resources area and then have a post install script that runs the above command.  There is a lot more detail possible, but that might be another blog post. Cisco&rsquo;s AnyConnect Secure Mobility installer is pretty friendly when it comes to repackaging/making choices.  If we try to apply the above to the McAfee Endpoint Security 10.2.1 installer, we will see some additional complexity. <code>installer ‑showChoicesXML ‑pkg /path/to/McAfee_Endpoint_Security\ 10.2.1/1\ Source/McAfee-Endpoint-Security-for-Mac-10.2.1-RTW-standalone-2632.pkg ‑target /</code> [gist]6c976037049b701741deb01bce7c660d[/gist] Notice that the choiceIdentifier is the not so helpful installer_choice_5.  We can still see what the choice is by the choiceTitle, but now when we create our choices.xml, we need to be very careful about which choices we are selecting and which we are not.  Your end result will look something like: [gist]c4cb8ef55ce6e11b108fa6a51e48c385[/gist] In this file, installer_choice_5 is the Firewall and installer_choice_6 is Web Control. For this type of package it can be important to save the output of showChoicesXML as a reference for which choice is which. This is an example of only putting in dictionaries for the choices we want to change.  I would say this is probably not a best practice as different systems can end up with different defaults, but it can work.</p>
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/os-x-general/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">OS X General</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/packaging/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Packaging</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/posts/signing-installer-packages-with-automator/">Signing Installer Packages with Automator</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/mounting-file-shares-based-on-ad-group-membership-using-enterprise-connect/">Mounting File Shares Based on AD Group Membership using Enterprise Connect</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/using-ldapsearch-to-get-ad-data/">Using ldapsearch to get AD data</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/macos-sierra-recovery-hd-changes/">macOS Sierra Recovery HD Changes</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/update-to-network-geektool-script/">Update to network GeekTool script</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/find-the-most-common-user-on-a-system/">Find the most common user on a system</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/keyboard-shortcut-for-system-preferences/">Keyboard shortcut for System Preferences</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/control-if-a-window-opens-when-a-volume-mounts/">Control if a window opens when a volume mounts</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

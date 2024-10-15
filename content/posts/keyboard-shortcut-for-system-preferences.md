@@ -1,0 +1,8 @@
+---
+title: 'Keyboard shortcut for System Preferences'
+date: Wed, 06 Nov 2013 16:17:26 +0000
+draft: false
+tags: ['OS X General']
+---
+
+I just had a student in class ask about a keyboard shortcut for System Preferences.  There isn't one built-in, but we can make one. Open System Preferences and select the Keyboard panel.  Then select the Shortcuts tab.  On the left choose the App Shortcuts entry and click the plus sign below the box on the right. [![Screen Shot 2013-11-06 at 10.11.22 AM](http://sneakypockets.wordpress.com/wp-content/uploads/2013/11/screen-shot-2013-11-06-at-10-11-22-am.png?w=300)](http://sneakypockets.wordpress.com/wp-content/uploads/2013/11/screen-shot-2013-11-06-at-10-11-22-am.png) In the sheet that drops down leave the menu on All Applications (this keyboard shortcut should always work).  Then for the Menu Title enter "System Preferences...".  This should exactly match the actual command in the menu.  Interestingly, using 3 periods instead of an ellipsis (…) works fine.  Then click in the Keyboard Shortcut field and press the keys you want to use. Click Add.[![Screen Shot 2013-11-06 at 10.11.41 AM](http://sneakypockets.wordpress.com/wp-content/uploads/2013/11/screen-shot-2013-11-06-at-10-11-41-am.png?w=300)](http://sneakypockets.wordpress.com/wp-content/uploads/2013/11/screen-shot-2013-11-06-at-10-11-41-am.png) I chose option-command-comma since command-comma is used for application preferences. Now from anywhere, you should be able to type your keyboard shortcut to open System Preferences.

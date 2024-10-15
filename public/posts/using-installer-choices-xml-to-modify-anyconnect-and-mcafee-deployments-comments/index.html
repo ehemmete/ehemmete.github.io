@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Using installer choices.xml to modify AnyConnect and McAfee deployments | My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="
+Scott Beach - Oct 3, 2018
+I&rsquo;ve been looking for this information for exactly these two .pkgs! This is great. Thank very much for it. I&rsquo;ll work on it tomorrow! - Scott Rogers Communications MacAnalyst
+
+[…] showing how to deploy Cisco AnyConnect using Jamf Pro. As part of that documentation, HCS described how to create an installer choices XML file and then use it to create a custom Cisco AnyConnect installer […]">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/posts/using-installer-choices-xml-to-modify-anyconnect-and-mcafee-deployments-comments/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/posts/using-installer-choices-xml-to-modify-anyconnect-and-mcafee-deployments-comments/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Using installer choices.xml to modify AnyConnect and McAfee deployments">
+  <meta property="og:description" content=" Scott Beach - Oct 3, 2018
+I’ve been looking for this information for exactly these two .pkgs! This is great. Thank very much for it. I’ll work on it tomorrow! - Scott Rogers Communications MacAnalyst
+[…] showing how to deploy Cisco AnyConnect using Jamf Pro. As part of that documentation, HCS described how to create an installer choices XML file and then use it to create a custom Cisco AnyConnect installer […]">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2017-07-27T01:37:58+00:00">
+    <meta property="article:modified_time" content="2017-07-27T01:37:58+00:00">
+    <meta property="article:tag" content="OS X General">
+    <meta property="article:tag" content="Packaging">
+
+  <meta itemprop="name" content="Using installer choices.xml to modify AnyConnect and McAfee deployments">
+  <meta itemprop="description" content=" Scott Beach - Oct 3, 2018
+I’ve been looking for this information for exactly these two .pkgs! This is great. Thank very much for it. I’ll work on it tomorrow! - Scott Rogers Communications MacAnalyst
+[…] showing how to deploy Cisco AnyConnect using Jamf Pro. As part of that documentation, HCS described how to create an installer choices XML file and then use it to create a custom Cisco AnyConnect installer […]">
+  <meta itemprop="datePublished" content="2017-07-27T01:37:58+00:00">
+  <meta itemprop="dateModified" content="2017-07-27T01:37:58+00:00">
+  <meta itemprop="wordCount" content="343">
+  <meta itemprop="keywords" content="OS X General,Packaging">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Using installer choices.xml to modify AnyConnect and McAfee deployments">
+  <meta name="twitter:description" content=" Scott Beach - Oct 3, 2018
+I’ve been looking for this information for exactly these two .pkgs! This is great. Thank very much for it. I’ll work on it tomorrow! - Scott Rogers Communications MacAnalyst
+[…] showing how to deploy Cisco AnyConnect using Jamf Pro. As part of that documentation, HCS described how to create an installer choices XML file and then use it to create a custom Cisco AnyConnect installer […]">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Using installer choices.xml to modify AnyConnect and McAfee deployments</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2017-07-27T01:37:58Z">July 27, 2017</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><h4 id="heading"></h4>
+<p><a href="http://www.rogers.com" title="scott.beach@rci.rogers.com">Scott Beach</a> - <!-- raw HTML omitted -->Oct 3, 2018<!-- raw HTML omitted --></p>
+<p>I&rsquo;ve been looking for this information for exactly these two .pkgs! This is great. Thank very much for it. I&rsquo;ll work on it tomorrow! - Scott Rogers Communications MacAnalyst</p>
+<!-- raw HTML omitted -->
+<p>[…] showing how to deploy Cisco AnyConnect using Jamf Pro. As part of that documentation, HCS described how to create an installer choices XML file and then use it to create a custom Cisco AnyConnect installer […]</p>
+<!-- raw HTML omitted -->
+<p>I did write up a second article about packaging these into a wrapper package. <a href="https://sneakypockets.wordpress.com/2020/03/17/creating-a-wrapper-package-for-a-choices-xml-file/">https://sneakypockets.wordpress.com/2020/03/17/creating-a-wrapper-package-for-a-choices-xml-file/</a>. Besides that, what errors are you seeing?</p>
+<!-- raw HTML omitted -->
+<p>Really struggling with this&hellip; I&rsquo;m not sure what I&rsquo;m doing wrong but packaging seems to be really confusing.. I can run the installer with the files, all works as expected but as soon as it comes to packaging this up&hellip; despite following the above instructions, I get errors.</p>
+<!-- raw HTML omitted -->
+<p>Thanks for providing this avaluable information</p>
+<!-- raw HTML omitted -->
+<p>Time has passed and now the AnyConnect installer has more choices. Here&rsquo;s an updated choices.xml file, for version 4.8, that excludes all but the VPN: attributeSetting 1 choiceAttribute selected choiceIdentifier choice_vpn attributeSetting 0 choiceAttribute selected choiceIdentifier choice_websecurity attributeSetting 0 choiceAttribute selected choiceIdentifier choice_fireamp attributeSetting 0 choiceAttribute selected choiceIdentifier choice_dart attributeSetting 0 choiceAttribute selected choiceIdentifier choice_posture attributeSetting 0 choiceAttribute selected choiceIdentifier choice_iseposture attributeSetting 0 choiceAttribute selected choiceIdentifier choice_nvm attributeSetting 0 choiceAttribute selected choiceIdentifier choice_umbrella</p>
+<!-- raw HTML omitted -->
+<p>[…] a previous article, I discussed creating a choices.xml file to control what gets installed by a vendor package.  I […]</p>
+<!-- raw HTML omitted -->
+<p>I&rsquo;ve setup my XML to disable all but the VPN, however after using the ‑showChoicesAfterApplyingChangesXML option, it comes back as showing the VPN selection as 0. I can&rsquo;t figure out why my XML choice file isn&rsquo;t being applied</p>
+<!-- raw HTML omitted -->
+<p>[…] <a href="https://sneakypockets.wordpress.com/2017/07/26/using-installer-choices-xml-to-modify-anyconnect-and-">https://sneakypockets.wordpress.com/2017/07/26/using-installer-choices-xml-to-modify-anyconnect-and-</a>… […]</p>
+<!-- raw HTML omitted -->
+<p>[…] GlobalProtect and enable the System Extension for GlobalProtect can be managed by using an installer choices XML file to selectively enable only the desired option. For example, here’s the installer choices XML […]</p>
+<!-- raw HTML omitted -->
+<p>[…] installer, it’s possible to replicate this packaging workflow, including generating an installer choices XML file, using AutoPkg. For more details, please see below the […]</p>
+<!-- raw HTML omitted -->
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/os-x-general/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">OS X General</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/packaging/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Packaging</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/posts/using-installer-choices-xml-to-modify-anyconnect-and-mcafee-deployments/">Using installer choices.xml to modify AnyConnect and McAfee deployments</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/signing-installer-packages-with-automator-comments/">Signing Installer Packages with Automator</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/signing-installer-packages-with-automator/">Signing Installer Packages with Automator</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/mounting-file-shares-based-on-ad-group-membership-using-enterprise-connect-comments/">Mounting File Shares Based on AD Group Membership using Enterprise Connect</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/mounting-file-shares-based-on-ad-group-membership-using-enterprise-connect/">Mounting File Shares Based on AD Group Membership using Enterprise Connect</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/using-ldapsearch-to-get-ad-data/">Using ldapsearch to get AD data</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/using-ldapsearch-to-get-ad-data-comments/">Using ldapsearch to get AD data</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/macos-sierra-recovery-hd-changes-comments/">macOS Sierra Recovery HD Changes</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/macos-sierra-recovery-hd-changes/">macOS Sierra Recovery HD Changes</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/update-to-network-geektool-script/">Update to network GeekTool script</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/update-to-network-geektool-script-comments/">Update to network GeekTool script</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/find-the-most-common-user-on-a-system/">Find the most common user on a system</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/keyboard-shortcut-for-system-preferences/">Keyboard shortcut for System Preferences</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/control-if-a-window-opens-when-a-volume-mounts/">Control if a window opens when a volume mounts</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

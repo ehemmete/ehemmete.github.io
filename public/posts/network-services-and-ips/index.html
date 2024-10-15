@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Network Services and IPs | My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="I have long had a GeekTool item on my desktop that tells me what network interfaces were active and what IPs I have on them, as well as my external IP address.  For a long time this relied on ifconfig and manually updating the interface numbers (en0, en1, etc&hellip;).  Now that I have a Retina MBP, without an ethernet port, I have a lot of possible interfaces with the various adapters.  Managing the script manually was getting annoying.  So I rewrote it to use networksetup and a while loop.  The script is below: [code language=&ldquo;bash&rdquo;]#! /bin/bash connection=false services=$(networksetup -listallnetworkservices) while read service; do ip=$(networksetup -getinfo &ldquo;$service&rdquo; | grep &ldquo;IP address&rdquo; | grep -v &ldquo;IPv6&rdquo; | awk &lsquo;{print $3}&rsquo;) if [ &ldquo;$ip&rdquo; != &quot;&quot; ]; then echo &ldquo;$service : $ip&rdquo; connection=true fi done &lt;&lt;&lt;&quot;$services&quot; astatus=$(networksetup -getinfo &ldquo;Wi-Fi&rdquo; | grep &ldquo;IP address&rdquo; | grep -v &ldquo;IPv6&rdquo; | awk &lsquo;{print $3}&rsquo;) if [ &ldquo;$astatus&rdquo; != &quot;&quot; ]; then NetName=`system_profiler SPAirPortDataType | awk &lsquo;/Current Network Information:/ { found=NR } found &amp;&amp; NR==found&#43;1&rsquo; | awk &lsquo;{$1=$1};1&rsquo; | cut -d&quot;:&quot; -f1` Channel=`system_profiler SPAirPortDataType | awk &lsquo;/Current Network Information:/ { found=NR } found &amp;&amp; NR==found&#43;4&rsquo; | awk &lsquo;{$1=$1};1&rsquo; | sed &rsquo;s/Channel/Ch/g&rsquo;` echo &ldquo;$NetName / $Channel&rdquo; fi if [ $connection = false ]; then echo &ldquo;No Connected Services&rdquo; else extIP=$(curl -s http://checkip.dyndns.org/ | sed &rsquo;s/[a-zA-Z&lt;&gt;/ :]//g&rsquo;) if [ &ldquo;$extIP&rdquo; != &quot;&quot; ]; then echo &ldquo;External IP: $extIP&rdquo; else echo &ldquo;No External Connection&rdquo; fi fi [/code] The first line gets a list of all network services as defined in the current location in the Network panel of System Preferences, as well as a few other options (bluetooth, usb attached MiFis, etc).  Then for each one of those, we try to look up an IP address.  If there isn&rsquo;t an IP, nothing is displayed, but if there is, then the service name and IP are output. If the Wi-Fi service has an IP address, then the network name and channel that the system is connected to is found and output. Finally, we use a external website to lookup the public IP that our outside connection is from. [Edit] I added some checking so that if there is no connection, it will display that.  Also it will now display if there is no external connection [/Edit] Currently, this is all for IPv4 addresses, and I explicitly exclude any IPv6 addresses that might be assigned, but that could be modified by changing the grep portions of the script. Then in GeekTool I setup a Shell Script item and point it to my script.  That looks like this:  The output then is positioned in the lower left hand corner of my screen and looks like:  The next step is to use this as an excuse to try out Übersicht.">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/posts/network-services-and-ips/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/posts/network-services-and-ips/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Network Services and IPs">
+  <meta property="og:description" content="I have long had a GeekTool item on my desktop that tells me what network interfaces were active and what IPs I have on them, as well as my external IP address. For a long time this relied on ifconfig and manually updating the interface numbers (en0, en1, etc…). Now that I have a Retina MBP, without an ethernet port, I have a lot of possible interfaces with the various adapters. Managing the script manually was getting annoying. So I rewrote it to use networksetup and a while loop. The script is below: [code language=“bash”]#! /bin/bash connection=false services=$(networksetup -listallnetworkservices) while read service; do ip=$(networksetup -getinfo “$service” | grep “IP address” | grep -v “IPv6” | awk ‘{print $3}’) if [ “$ip” != &#34;&#34; ]; then echo “$service : $ip” connection=true fi done &lt;&lt;&lt;&#34;$services&#34; astatus=$(networksetup -getinfo “Wi-Fi” | grep “IP address” | grep -v “IPv6” | awk ‘{print $3}’) if [ “$astatus” != &#34;&#34; ]; then NetName=`system_profiler SPAirPortDataType | awk ‘/Current Network Information:/ { found=NR } found &amp;&amp; NR==found&#43;1’ | awk ‘{$1=$1};1’ | cut -d&#34;:&#34; -f1` Channel=`system_profiler SPAirPortDataType | awk ‘/Current Network Information:/ { found=NR } found &amp;&amp; NR==found&#43;4’ | awk ‘{$1=$1};1’ | sed ’s/Channel/Ch/g’` echo “$NetName / $Channel” fi if [ $connection = false ]; then echo “No Connected Services” else extIP=$(curl -s http://checkip.dyndns.org/ | sed ’s/[a-zA-Z&lt;&gt;/ :]//g’) if [ “$extIP” != &#34;&#34; ]; then echo “External IP: $extIP” else echo “No External Connection” fi fi [/code] The first line gets a list of all network services as defined in the current location in the Network panel of System Preferences, as well as a few other options (bluetooth, usb attached MiFis, etc). Then for each one of those, we try to look up an IP address. If there isn’t an IP, nothing is displayed, but if there is, then the service name and IP are output. If the Wi-Fi service has an IP address, then the network name and channel that the system is connected to is found and output. Finally, we use a external website to lookup the public IP that our outside connection is from. [Edit] I added some checking so that if there is no connection, it will display that. Also it will now display if there is no external connection [/Edit] Currently, this is all for IPv4 addresses, and I explicitly exclude any IPv6 addresses that might be assigned, but that could be modified by changing the grep portions of the script. Then in GeekTool I setup a Shell Script item and point it to my script. That looks like this: The output then is positioned in the lower left hand corner of my screen and looks like: The next step is to use this as an excuse to try out Übersicht.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2014-08-30T22:47:32+00:00">
+    <meta property="article:modified_time" content="2014-08-30T22:47:32+00:00">
+    <meta property="article:tag" content="Uncategorized">
+
+  <meta itemprop="name" content="Network Services and IPs">
+  <meta itemprop="description" content="I have long had a GeekTool item on my desktop that tells me what network interfaces were active and what IPs I have on them, as well as my external IP address. For a long time this relied on ifconfig and manually updating the interface numbers (en0, en1, etc…). Now that I have a Retina MBP, without an ethernet port, I have a lot of possible interfaces with the various adapters. Managing the script manually was getting annoying. So I rewrote it to use networksetup and a while loop. The script is below: [code language=“bash”]#! /bin/bash connection=false services=$(networksetup -listallnetworkservices) while read service; do ip=$(networksetup -getinfo “$service” | grep “IP address” | grep -v “IPv6” | awk ‘{print $3}’) if [ “$ip” != &#34;&#34; ]; then echo “$service : $ip” connection=true fi done &lt;&lt;&lt;&#34;$services&#34; astatus=$(networksetup -getinfo “Wi-Fi” | grep “IP address” | grep -v “IPv6” | awk ‘{print $3}’) if [ “$astatus” != &#34;&#34; ]; then NetName=`system_profiler SPAirPortDataType | awk ‘/Current Network Information:/ { found=NR } found &amp;&amp; NR==found&#43;1’ | awk ‘{$1=$1};1’ | cut -d&#34;:&#34; -f1` Channel=`system_profiler SPAirPortDataType | awk ‘/Current Network Information:/ { found=NR } found &amp;&amp; NR==found&#43;4’ | awk ‘{$1=$1};1’ | sed ’s/Channel/Ch/g’` echo “$NetName / $Channel” fi if [ $connection = false ]; then echo “No Connected Services” else extIP=$(curl -s http://checkip.dyndns.org/ | sed ’s/[a-zA-Z&lt;&gt;/ :]//g’) if [ “$extIP” != &#34;&#34; ]; then echo “External IP: $extIP” else echo “No External Connection” fi fi [/code] The first line gets a list of all network services as defined in the current location in the Network panel of System Preferences, as well as a few other options (bluetooth, usb attached MiFis, etc). Then for each one of those, we try to look up an IP address. If there isn’t an IP, nothing is displayed, but if there is, then the service name and IP are output. If the Wi-Fi service has an IP address, then the network name and channel that the system is connected to is found and output. Finally, we use a external website to lookup the public IP that our outside connection is from. [Edit] I added some checking so that if there is no connection, it will display that. Also it will now display if there is no external connection [/Edit] Currently, this is all for IPv4 addresses, and I explicitly exclude any IPv6 addresses that might be assigned, but that could be modified by changing the grep portions of the script. Then in GeekTool I setup a Shell Script item and point it to my script. That looks like this: The output then is positioned in the lower left hand corner of my screen and looks like: The next step is to use this as an excuse to try out Übersicht.">
+  <meta itemprop="datePublished" content="2014-08-30T22:47:32+00:00">
+  <meta itemprop="dateModified" content="2014-08-30T22:47:32+00:00">
+  <meta itemprop="wordCount" content="456">
+  <meta itemprop="keywords" content="Uncategorized">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Network Services and IPs">
+  <meta name="twitter:description" content="I have long had a GeekTool item on my desktop that tells me what network interfaces were active and what IPs I have on them, as well as my external IP address. For a long time this relied on ifconfig and manually updating the interface numbers (en0, en1, etc…). Now that I have a Retina MBP, without an ethernet port, I have a lot of possible interfaces with the various adapters. Managing the script manually was getting annoying. So I rewrote it to use networksetup and a while loop. The script is below: [code language=“bash”]#! /bin/bash connection=false services=$(networksetup -listallnetworkservices) while read service; do ip=$(networksetup -getinfo “$service” | grep “IP address” | grep -v “IPv6” | awk ‘{print $3}’) if [ “$ip” != &#34;&#34; ]; then echo “$service : $ip” connection=true fi done &lt;&lt;&lt;&#34;$services&#34; astatus=$(networksetup -getinfo “Wi-Fi” | grep “IP address” | grep -v “IPv6” | awk ‘{print $3}’) if [ “$astatus” != &#34;&#34; ]; then NetName=`system_profiler SPAirPortDataType | awk ‘/Current Network Information:/ { found=NR } found &amp;&amp; NR==found&#43;1’ | awk ‘{$1=$1};1’ | cut -d&#34;:&#34; -f1` Channel=`system_profiler SPAirPortDataType | awk ‘/Current Network Information:/ { found=NR } found &amp;&amp; NR==found&#43;4’ | awk ‘{$1=$1};1’ | sed ’s/Channel/Ch/g’` echo “$NetName / $Channel” fi if [ $connection = false ]; then echo “No Connected Services” else extIP=$(curl -s http://checkip.dyndns.org/ | sed ’s/[a-zA-Z&lt;&gt;/ :]//g’) if [ “$extIP” != &#34;&#34; ]; then echo “External IP: $extIP” else echo “No External Connection” fi fi [/code] The first line gets a list of all network services as defined in the current location in the Network panel of System Preferences, as well as a few other options (bluetooth, usb attached MiFis, etc). Then for each one of those, we try to look up an IP address. If there isn’t an IP, nothing is displayed, but if there is, then the service name and IP are output. If the Wi-Fi service has an IP address, then the network name and channel that the system is connected to is found and output. Finally, we use a external website to lookup the public IP that our outside connection is from. [Edit] I added some checking so that if there is no connection, it will display that. Also it will now display if there is no external connection [/Edit] Currently, this is all for IPv4 addresses, and I explicitly exclude any IPv6 addresses that might be assigned, but that could be modified by changing the grep portions of the script. Then in GeekTool I setup a Shell Script item and point it to my script. That looks like this: The output then is positioned in the lower left hand corner of my screen and looks like: The next step is to use this as an excuse to try out Übersicht.">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Network Services and IPs</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2014-08-30T22:47:32Z">August 30, 2014</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>I have long had a <a href="http://projects.tynsoe.org/en/geektool/" title="GeekTool">GeekTool</a> item on my desktop that tells me what network interfaces were active and what IPs I have on them, as well as my external IP address.  For a long time this relied on ifconfig and manually updating the interface numbers (en0, en1, etc&hellip;).  Now that I have a Retina MBP, without an ethernet port, I have a lot of possible interfaces with the various adapters.  Managing the script manually was getting annoying.  So I rewrote it to use networksetup and a while loop.  The script is below: [code language=&ldquo;bash&rdquo;]#! /bin/bash connection=false services=$(networksetup -listallnetworkservices) while read service; do ip=$(networksetup -getinfo &ldquo;$service&rdquo; | grep &ldquo;IP address&rdquo; | grep -v &ldquo;IPv6&rdquo; | awk &lsquo;{print $3}&rsquo;) if [ &ldquo;$ip&rdquo; != &quot;&quot; ]; then echo &ldquo;$service : $ip&rdquo; connection=true fi done &lt;&lt;&lt;&quot;$services&quot; astatus=$(networksetup -getinfo &ldquo;Wi-Fi&rdquo; | grep &ldquo;IP address&rdquo; | grep -v &ldquo;IPv6&rdquo; | awk &lsquo;{print $3}&rsquo;) if [ &ldquo;$astatus&rdquo; != &quot;&quot; ]; then NetName=`system_profiler SPAirPortDataType | awk &lsquo;/Current Network Information:/ { found=NR } found &amp;&amp; NR==found+1&rsquo; | awk &lsquo;{$1=$1};1&rsquo; | cut -d&quot;:&quot; -f1` Channel=`system_profiler SPAirPortDataType | awk &lsquo;/Current Network Information:/ { found=NR } found &amp;&amp; NR==found+4&rsquo; | awk &lsquo;{$1=$1};1&rsquo; | sed &rsquo;s/Channel/Ch/g&rsquo;` echo &ldquo;$NetName / $Channel&rdquo; fi if [ $connection = false ]; then echo &ldquo;No Connected Services&rdquo; else extIP=$(curl -s <a href="http://checkip.dyndns.org/">http://checkip.dyndns.org/</a> | sed &rsquo;s/[a-zA-Z&lt;&gt;/ :]//g&rsquo;) if [ &ldquo;$extIP&rdquo; != &quot;&quot; ]; then echo &ldquo;External IP: $extIP&rdquo; else echo &ldquo;No External Connection&rdquo; fi fi [/code] The first line gets a list of all network services as defined in the current location in the Network panel of System Preferences, as well as a few other options (bluetooth, usb attached MiFis, etc).  Then for each one of those, we try to look up an IP address.  If there isn&rsquo;t an IP, nothing is displayed, but if there is, then the service name and IP are output. If the Wi-Fi service has an IP address, then the network name and channel that the system is connected to is found and output. Finally, we use a external website to lookup the public IP that our outside connection is from. [Edit] I added some checking so that if there is no connection, it will display that.  Also it will now display if there is no external connection [/Edit] Currently, this is all for IPv4 addresses, and I explicitly exclude any IPv6 addresses that might be assigned, but that could be modified by changing the grep portions of the script. Then in GeekTool I setup a Shell Script item and point it to my script.  That looks like this: <a href="https://sneakypockets.wordpress.com/wp-content/uploads/2014/08/geektool-config.png"><img src="https://sneakypockets.wordpress.com/wp-content/uploads/2014/08/geektool-config.png?w=132" alt="GeekTool config"></a> The output then is positioned in the lower left hand corner of my screen and looks like: <a href="https://sneakypockets.wordpress.com/wp-content/uploads/2014/08/geektool-output1.png"><img src="http://sneakypockets.wordpress.com/wp-content/uploads/2014/08/geektool-output1.png?w=300" alt="GeekTool output"></a> The next step is to use this as an excuse to try out <a href="http://tracesof.net/uebersicht/">Übersicht</a>.</p>
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/uncategorized/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Uncategorized</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

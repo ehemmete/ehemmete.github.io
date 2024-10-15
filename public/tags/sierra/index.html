@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+    
+      <link href="/tags/sierra/index.xml" rel="alternate" type="application/rss+xml" title="My Thoughts" />
+      <link href="/tags/sierra/index.xml" rel="feed" type="application/rss+xml" title="My Thoughts" />
+      
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/tags/sierra/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/tags/sierra/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Sierra">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="website">
+
+  <meta itemprop="name" content="Sierra">
+  <meta itemprop="datePublished" content="2018-02-02T20:28:49+00:00">
+  <meta itemprop="dateModified" content="2018-02-02T20:28:49+00:00">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Sierra">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+
+  <header>
+    <div class="pb3-m pb6-l bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+      <div class="tc-l pv3 ph3 ph4-ns">
+        <h1 class="f2 f-subheadline-l fw2 light-silver mb0 lh-title">
+          Sierra
+        </h1>
+        
+      </div>
+    </div>
+  </header>
+
+
+    <main class="pb7" role="main">
+      
+  <article class="cf pa3 pa4-m pa4-l">
+    <div class="measure-wide-l center f4 lh-copy nested-copy-line-height nested-links mid-gray">
+      <p>Below you will find pages that utilize the taxonomy term “Sierra”</p>
+    </div>
+  </article>
+  <div class="mw8 center">
+    <section class="flex-ns flex-wrap justify-around mt5">
+      
+        <div class="relative w-100  mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/setting-the-screen-saver-to-a-static-image/" class="link black dim">
+        Setting the Screen Saver to a static image
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      <p>On our Windows systems we have a static image as our screen saver and I wanted to match that on our Macs.  There are several options in the Screen Saver settings of System Preferences.  I needed to figure out how to set a default across all our Macs with a script.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2018/02/screen-shot-2018-02-02-at-1-55-51-pm.png" alt="Screen Shot 2018-02-02 at 1.55.51 PM.png">  We wanted a single image statically on the screen.  By making a folder with one image in it, we can use the slideshow options to show our single image. After setting things up the way I wanted, I looked around to see where the settings were stored.  You can use something like <a href="https://fsmonitor.com">FSMonitor</a> to watch what files are edited when you change things in System Preferences.  These settings are per user and per device, so they end up in ~/Library/ByHost/com.apple.screensaver.plist, ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist, and ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist.  If you select other options, you might not need all of these files. To work with this files, use <code>defaults -currentHost read [preference-domain]</code>. First look at com.apple.screensaver.plist:<code>$ defaults -currentHost read com.apple.screensaver { PrefsVersion = 100; idleTime = 1800; moduleDict =     { moduleName = iLifeSlideshows; path = &quot;/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver&quot;; type = 0; }; }</code>Then ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist:<code>defaults -currentHost read com.apple.ScreenSaver.iLifeSlideShows { styleKey = Classic; }</code>Then finally, ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist:<code>defaults -currentHost read com.apple.ScreenSaverPhotoChooser { CustomFolderDict =     { identifier = &quot;/Library/Screen Savers/CompanyName&quot;; name = CompanyName; }; LastViewedPhotoPath = &quot;&quot;; SelectedFolderPath = &quot;/Library/Screen Savers/CompanyName&quot;; SelectedSource = 4; }</code>To set these, we use a very similar command: <code>defaults -currentHost write [preference-domain] [key] [value]</code>. After some testing I&rsquo;ve found we just need:```
+#!/bin/sh
+defaults -currentHost write com.apple.screensaver moduleDict -dict moduleName iLifeSlideshows path &ldquo;/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver&rdquo; type 0
+defaults -currentHost write com.apple.ScreenSaver.iLifeSlideShows styleKey Classic
+defaults -currentHost write com.apple.ScreenSaverPhotoChooser SelectedFolderPath &ldquo;/Library/Screen Savers/CompanyName&rdquo;</p>
+    </div>
+    <a href="/posts/setting-the-screen-saver-to-a-static-image/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+  </div>
+</div>
+
+        </div>
+      
+        <div class="relative w-100  mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/macos-sierra-recovery-hd-changes-comments/" class="link black dim">
+        macOS Sierra Recovery HD Changes
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      <h4 id="heading"></h4>
+<p><a href="https://ExtremeLanding.com/" title="ExtremeLanding.com@gmail.com">Extreme Landing</a> - <!-- raw HTML omitted -->Jan 2, 2017<!-- raw HTML omitted --></p>
+<p>I accidentally changed the ACLs permissions on my home folder and had the same problem on my MacBook Pro running macOS Sierra version 10.12.2 Follow the step below to changed the folders No Access permissions and revert back to Allow access: Restart with the Command and S keys held down, and run the following commands: mount -uw / chown root / chmod 1775 / exit &ndash; After the last command &ldquo;exit&rdquo; your system should restart on its own and everything should appear the same as the time before you changed the Home folder permissions. I hope this helps, Extreme Landing <a href="https://ExtremeLanding.com/">https://ExtremeLanding.com/</a></p>
+    </div>
+    <a href="/posts/macos-sierra-recovery-hd-changes-comments/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+  </div>
+</div>
+
+        </div>
+      
+        <div class="relative w-100  mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/macos-sierra-recovery-hd-changes/" class="link black dim">
+        macOS Sierra Recovery HD Changes
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      <p>[Update 7/20/17] As of 10.12.6 RepairHomePermissions still fails with error: Unable to launch the underlying task process.  Also my bug report has been marked as a  DUPLICATE OF 25393689. [Update 1/26/17] As of 10.12.3 RepairHomePermissions still fails with error: Unable to launch the underlying task process. One of the areas that hasn&rsquo;t gotten much coverage with the update to Sierra is the Recovery HD. This is the minimal OS environment that lets us do things like reinstall the OS, restore a Time Machine backup, and partition volumes before an install. The other thing that Recovery allows us to do is to reset forgotten passwords. Originally, we could do this by booting off the install CD/DVD. Once those went away Recovery HD gave us a Reset Password option in the Utilities menu. That went away in Yosemite(?) but we could get the same functionality by choosing Utilities -&gt; Terminal and running the resetpassword command. This reset password utility would also allow us to reset a users home folder permissions, including the default ACLs. Now with macOS Sierra v10.12, this has changed again. To start, boot to Recovery by holding down Command-R at startup.  You will end up at a screen like: <img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-10-31-pm.png" alt="Screen Shot 2016-09-21 at 3.10.31 PM.png"> Then open the Utilities menu and choose Terminal:<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-10-55-pm.png" alt="Screen Shot 2016-09-21 at 3.10.55 PM.png"> In the Terminal window that open, run the resetpassword command to bring up a new assistant.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-11-11-pm.png" alt="Screen Shot 2016-09-21 at 3.11.11 PM.png"> Select the user you need to reset the password of and click Next. <img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-11-28-pm.png" alt="Screen Shot 2016-09-21 at 3.11.28 PM.png"> Then you can enter the new password and confirm it.  Add a hint if you want and click Next.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-11-42-pm.png" alt="Screen Shot 2016-09-21 at 3.11.42 PM.png"> Finally you get confirmation of the change and can reboot.  Or if you open the Reset Password menu, you can quit to easily return to the Terminal.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-11-57-pm.png" alt="Screen Shot 2016-09-21 at 3.11.57 PM.png"> The piece that is missing from all that is reseting home folder permissions.  It turns out there is a new tool to (try to) do this.  Back in your terminal, enter the command RepairHomePermissions and hit Enter.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-12-28-pm.png" alt="Screen Shot 2016-09-21 at 3.12.28 PM.png"> Again an assistant opens and we can select the user whose home folder permissions we need to reset.  Click Next.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-12-36-pm.png" alt="Screen Shot 2016-09-21 at 3.12.36 PM.png"> Unfortunately, at this time (Sierra v10.12 build 16A323) the process fails.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-12-41-pm.png" alt="Screen Shot 2016-09-21 at 3.12.41 PM.png"> Again, you can reboot or Quit the RepairHomePermissions assistant (interestingly called ResetPassword in the menu bar). Note that RepairHomePermissions is available in a full Sierra install, but fails even sooner when run as it tries to reference /System/Installation/CDIS/KeyRecoveryAssistant.app/Contents/MacOS/KeyRecoveryAssistant, which doesn&rsquo;t exist on a standard install. Also both of these assistants will have you unlock a FileVaulted drive before asking you which user to work with. Thanks to MacAdmin Slack members mikethefifth, for asking about reseting home folder permissions which prompted these tests, and owen.pragel, for sharing the new command list that included the tantalizing RepairHomePermissions and for finding the reference to KeyRecoveryAssistant. Update: I have filed a bug about RepairHomePermissions not working. https://openradar.appspot.com/28431470</p>
+    </div>
+    <a href="/posts/macos-sierra-recovery-hd-changes/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+  </div>
+</div>
+
+        </div>
+      
+    </section>
+  </div>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

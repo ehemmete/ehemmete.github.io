@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Creating a wrapper package for a choices.xml file | My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="In a previous article, I discussed creating a choices.xml file to control what gets installed by a vendor package.  I briefly touched on how to use the choices.xml file, but don&rsquo;t give much detail.  In this post, I will spell out how to put the vendor package and choices.xml file in a wrapper package for deployment through anything that handles packages. For my example, I will be using Cisco&rsquo;s AnyConnect 4.8 package and a choices.xml file to only install the VPN portion.  Using Stéphane Sudre&rsquo;s Packages application, create a new raw package project.  Give it a useful name and decide where to save the project. You can set Settings how you like, but the defaults generally work for what we are doing. Everything in this exercise will be in the Scripts tab. Drag the AnyConnect.pkg and your choices.xml to the Additional Resources area.  You can name your xml file anything you want.  For example, I have choicesForAnyConnectVPN.xml and choicesForAnyConnectUmbrella.xml for 2 different package projects.  For AnyConnect, I also want to install our vpn configuration, so I add a Profiles folder with the vpn folder and the configuration in there.  My company&rsquo;s VPN requires a certificate, so that is added as well. The AnyConnect.pkg already looks for the Profiles directory in the same directory as the package. Now we need a post installation script to tell the installer binary to use our choices.xml file.  The first step is to find the path to the resources area, which is created by the installer process and cleaned up automatically.  The post install script will be running from that directory, so we can find the path with ​dirname.  Then we tell installer about the choices.xml, the vendor package, and the target volume.  Lastly, I add the certificate to the System Keychain. https://gist.github.com/ehemmete/70396684d6ed91687ec4b7f85aa8961b Once the postinstall.sh is created, drag it to the Post-installation well, save your package, and build it. I then sign my packages with a certificate from my company&rsquo;s Apple developer account. Lastly, a note about the target for installer. You could put / in for the target, but if there is a chance this package will be installed while booted from something other than the internal drive (much more common in the era of imaging), the package will be installed to the boot volume, not the correct target.  Using $3 means put it on the target volume.  Rich Trouton mentions it under Installer Script Variables here.  There are also mentions in the old PeachPit Mac OS X Deployment book.  [edit]And thanks to Scripting OS X for the pointer to double quote $3 in the post install script.  In these cases (where it isn&rsquo;t /) it will likely expand to /Volumes/Macintosh HD/​ and the space will cause a problem if not quoted.  He also points out that I hard coded the path to the System Keychain, butsecurity won&rsquo;t be happy if $3 isn&rsquo;t /, so this isn&rsquo;t as flexible as I intended.">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/posts/creating-a-wrapper-package-for-a-choices-xml-file/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/posts/creating-a-wrapper-package-for-a-choices-xml-file/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Creating a wrapper package for a choices.xml file">
+  <meta property="og:description" content="In a previous article, I discussed creating a choices.xml file to control what gets installed by a vendor package. I briefly touched on how to use the choices.xml file, but don’t give much detail. In this post, I will spell out how to put the vendor package and choices.xml file in a wrapper package for deployment through anything that handles packages. For my example, I will be using Cisco’s AnyConnect 4.8 package and a choices.xml file to only install the VPN portion. Using Stéphane Sudre’s Packages application, create a new raw package project. Give it a useful name and decide where to save the project. You can set Settings how you like, but the defaults generally work for what we are doing. Everything in this exercise will be in the Scripts tab. Drag the AnyConnect.pkg and your choices.xml to the Additional Resources area. You can name your xml file anything you want. For example, I have choicesForAnyConnectVPN.xml and choicesForAnyConnectUmbrella.xml for 2 different package projects. For AnyConnect, I also want to install our vpn configuration, so I add a Profiles folder with the vpn folder and the configuration in there. My company’s VPN requires a certificate, so that is added as well. The AnyConnect.pkg already looks for the Profiles directory in the same directory as the package. Now we need a post installation script to tell the installer binary to use our choices.xml file. The first step is to find the path to the resources area, which is created by the installer process and cleaned up automatically. The post install script will be running from that directory, so we can find the path with ​dirname. Then we tell installer about the choices.xml, the vendor package, and the target volume. Lastly, I add the certificate to the System Keychain. https://gist.github.com/ehemmete/70396684d6ed91687ec4b7f85aa8961b Once the postinstall.sh is created, drag it to the Post-installation well, save your package, and build it. I then sign my packages with a certificate from my company’s Apple developer account. Lastly, a note about the target for installer. You could put / in for the target, but if there is a chance this package will be installed while booted from something other than the internal drive (much more common in the era of imaging), the package will be installed to the boot volume, not the correct target. Using $3 means put it on the target volume. Rich Trouton mentions it under Installer Script Variables here. There are also mentions in the old PeachPit Mac OS X Deployment book. [edit]And thanks to Scripting OS X for the pointer to double quote $3 in the post install script. In these cases (where it isn’t /) it will likely expand to /Volumes/Macintosh HD/​ and the space will cause a problem if not quoted. He also points out that I hard coded the path to the System Keychain, butsecurity won’t be happy if $3 isn’t /, so this isn’t as flexible as I intended.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2020-03-17T18:46:06+00:00">
+    <meta property="article:modified_time" content="2020-03-17T18:46:06+00:00">
+    <meta property="article:tag" content="OS X General">
+    <meta property="article:tag" content="Packaging">
+    <meta property="article:tag" content="Shell Script">
+
+  <meta itemprop="name" content="Creating a wrapper package for a choices.xml file">
+  <meta itemprop="description" content="In a previous article, I discussed creating a choices.xml file to control what gets installed by a vendor package. I briefly touched on how to use the choices.xml file, but don’t give much detail. In this post, I will spell out how to put the vendor package and choices.xml file in a wrapper package for deployment through anything that handles packages. For my example, I will be using Cisco’s AnyConnect 4.8 package and a choices.xml file to only install the VPN portion. Using Stéphane Sudre’s Packages application, create a new raw package project. Give it a useful name and decide where to save the project. You can set Settings how you like, but the defaults generally work for what we are doing. Everything in this exercise will be in the Scripts tab. Drag the AnyConnect.pkg and your choices.xml to the Additional Resources area. You can name your xml file anything you want. For example, I have choicesForAnyConnectVPN.xml and choicesForAnyConnectUmbrella.xml for 2 different package projects. For AnyConnect, I also want to install our vpn configuration, so I add a Profiles folder with the vpn folder and the configuration in there. My company’s VPN requires a certificate, so that is added as well. The AnyConnect.pkg already looks for the Profiles directory in the same directory as the package. Now we need a post installation script to tell the installer binary to use our choices.xml file. The first step is to find the path to the resources area, which is created by the installer process and cleaned up automatically. The post install script will be running from that directory, so we can find the path with ​dirname. Then we tell installer about the choices.xml, the vendor package, and the target volume. Lastly, I add the certificate to the System Keychain. https://gist.github.com/ehemmete/70396684d6ed91687ec4b7f85aa8961b Once the postinstall.sh is created, drag it to the Post-installation well, save your package, and build it. I then sign my packages with a certificate from my company’s Apple developer account. Lastly, a note about the target for installer. You could put / in for the target, but if there is a chance this package will be installed while booted from something other than the internal drive (much more common in the era of imaging), the package will be installed to the boot volume, not the correct target. Using $3 means put it on the target volume. Rich Trouton mentions it under Installer Script Variables here. There are also mentions in the old PeachPit Mac OS X Deployment book. [edit]And thanks to Scripting OS X for the pointer to double quote $3 in the post install script. In these cases (where it isn’t /) it will likely expand to /Volumes/Macintosh HD/​ and the space will cause a problem if not quoted. He also points out that I hard coded the path to the System Keychain, butsecurity won’t be happy if $3 isn’t /, so this isn’t as flexible as I intended.">
+  <meta itemprop="datePublished" content="2020-03-17T18:46:06+00:00">
+  <meta itemprop="dateModified" content="2020-03-17T18:46:06+00:00">
+  <meta itemprop="wordCount" content="489">
+  <meta itemprop="keywords" content="OS X General,Packaging,Shell Script">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Creating a wrapper package for a choices.xml file">
+  <meta name="twitter:description" content="In a previous article, I discussed creating a choices.xml file to control what gets installed by a vendor package. I briefly touched on how to use the choices.xml file, but don’t give much detail. In this post, I will spell out how to put the vendor package and choices.xml file in a wrapper package for deployment through anything that handles packages. For my example, I will be using Cisco’s AnyConnect 4.8 package and a choices.xml file to only install the VPN portion. Using Stéphane Sudre’s Packages application, create a new raw package project. Give it a useful name and decide where to save the project. You can set Settings how you like, but the defaults generally work for what we are doing. Everything in this exercise will be in the Scripts tab. Drag the AnyConnect.pkg and your choices.xml to the Additional Resources area. You can name your xml file anything you want. For example, I have choicesForAnyConnectVPN.xml and choicesForAnyConnectUmbrella.xml for 2 different package projects. For AnyConnect, I also want to install our vpn configuration, so I add a Profiles folder with the vpn folder and the configuration in there. My company’s VPN requires a certificate, so that is added as well. The AnyConnect.pkg already looks for the Profiles directory in the same directory as the package. Now we need a post installation script to tell the installer binary to use our choices.xml file. The first step is to find the path to the resources area, which is created by the installer process and cleaned up automatically. The post install script will be running from that directory, so we can find the path with ​dirname. Then we tell installer about the choices.xml, the vendor package, and the target volume. Lastly, I add the certificate to the System Keychain. https://gist.github.com/ehemmete/70396684d6ed91687ec4b7f85aa8961b Once the postinstall.sh is created, drag it to the Post-installation well, save your package, and build it. I then sign my packages with a certificate from my company’s Apple developer account. Lastly, a note about the target for installer. You could put / in for the target, but if there is a chance this package will be installed while booted from something other than the internal drive (much more common in the era of imaging), the package will be installed to the boot volume, not the correct target. Using $3 means put it on the target volume. Rich Trouton mentions it under Installer Script Variables here. There are also mentions in the old PeachPit Mac OS X Deployment book. [edit]And thanks to Scripting OS X for the pointer to double quote $3 in the post install script. In these cases (where it isn’t /) it will likely expand to /Volumes/Macintosh HD/​ and the space will cause a problem if not quoted. He also points out that I hard coded the path to the System Keychain, butsecurity won’t be happy if $3 isn’t /, so this isn’t as flexible as I intended.">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Creating a wrapper package for a choices.xml file</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2020-03-17T18:46:06Z">March 17, 2020</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>In a <a href="https://sneakypockets.wordpress.com/2017/07/26/using-installer-choices-xml-to-modify-anyconnect-and-mcafee-deployments/">previous article</a>, I discussed creating a choices.xml file to control what gets installed by a vendor package.  I briefly touched on how to use the choices.xml file, but don&rsquo;t give much detail.  In this post, I will spell out how to put the vendor package and choices.xml file in a wrapper package for deployment through anything that handles packages. For my example, I will be using Cisco&rsquo;s AnyConnect 4.8 package and a choices.xml file to only install the VPN portion.  Using <a href="http://s.sudre.free.fr/Software/Packages/about.html">Stéphane Sudre&rsquo;s Packages</a> application, create a new raw package project. <img src="https://sneakypockets.wordpress.com/wp-content/uploads/2020/03/screen-shot-2020-03-17-at-12.38.06-pm.png" alt="Screen Shot 2020-03-17 at 12.38.06 PM"> Give it a useful name and decide where to save the project. <img src="https://sneakypockets.wordpress.com/wp-content/uploads/2020/03/screen-shot-2020-03-17-at-12.38.24-pm.png" alt="Screen Shot 2020-03-17 at 12.38.24 PM">You can set Settings how you like, but the defaults generally work for what we are doing. Everything in this exercise will be in the Scripts tab. <img src="https://sneakypockets.wordpress.com/wp-content/uploads/2020/03/screen-shot-2020-03-17-at-12.58.09-pm.png" alt="Screen Shot 2020-03-17 at 12.58.09 PM">Drag the AnyConnect.pkg and your choices.xml to the Additional Resources area.  You can name your xml file anything you want.  For example, I have choicesForAnyConnectVPN.xml and choicesForAnyConnectUmbrella.xml for 2 different package projects.  For AnyConnect, I also want to install our vpn configuration, so I add a Profiles folder with the vpn folder and the configuration in there. <img src="https://sneakypockets.wordpress.com/wp-content/uploads/2020/03/screen-shot-2020-03-17-at-12.57.51-pm.png" alt="Screen Shot 2020-03-17 at 12.57.51 PM"> My company&rsquo;s VPN requires a certificate, so that is added as well.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2020/03/screen-shot-2020-03-17-at-1.38.57-pm.png" alt="Screen Shot 2020-03-17 at 1.38.57 PM.png"> The AnyConnect.pkg already looks for the Profiles directory in the same directory as the package. Now we need a post installation script to tell the installer binary to use our choices.xml file.  The first step is to find the path to the resources area, which is created by the installer process and cleaned up automatically.  The post install script will be running from that directory, so we can find the path with <code>​dirname</code>.  Then we tell installer about the choices.xml, the vendor package, and the target volume.  Lastly, I add the certificate to the System Keychain. <a href="https://gist.github.com/ehemmete/70396684d6ed91687ec4b7f85aa8961b">https://gist.github.com/ehemmete/70396684d6ed91687ec4b7f85aa8961b</a> Once the postinstall.sh is created, drag it to the Post-installation well, save your package, and build it. <img src="https://sneakypockets.wordpress.com/wp-content/uploads/2020/03/screen-shot-2020-03-17-at-1.39.44-pm.png" alt="Screen Shot 2020-03-17 at 1.39.44 PM.png">I then <a href="https://sneakypockets.wordpress.com/2016/11/04/signing-installer-packages-with-automator/">sign my packages</a> with a certificate from my company&rsquo;s Apple developer account. Lastly, a note about the target for <code>installer</code>. You could put <code>/</code> in for the target, but if there is a chance this package will be installed while booted from something other than the internal drive (much more common in the era of imaging), the package will be installed to the boot volume, not the correct target.  Using <code>$3</code> means put it on the target volume.  Rich Trouton mentions it under Installer Script Variables <a href="https://derflounder.wordpress.com/2014/06/01/understanding-payload-free-packages/">here</a>.  There are also mentions in the old PeachPit <a href="https://books.google.com/books?id=H3awpzaO7IwC&amp;lpg=PA111&amp;dq=%243%20The%20mount%20point%20of%20the%20destination%20volume&amp;pg=PA111#v=onepage&amp;q=$3%20The%20mount%20point%20of%20the%20destination%20volume&amp;f=false">Mac OS X Deployment</a> book.  [edit]And thanks to <a href="https://scriptingosx.com">Scripting OS X</a> for the pointer to double quote <code>$3</code> in the post install script.  In these cases (where it isn&rsquo;t <code>/</code>) it will likely expand to <code>/Volumes/Macintosh HD/</code>​ and the space will cause a problem if not quoted.  He also points out that I hard coded the path to the System Keychain, but<code>security</code> won&rsquo;t be happy if <code>$3</code> isn&rsquo;t <code>/</code>, so this isn&rsquo;t as flexible as I intended.</p>
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/os-x-general/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">OS X General</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/packaging/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Packaging</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/shell-script/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Shell Script</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/posts/using-a-swift-app-to-get-rid-of-lots-of-applescript-dialogs/">Using a Swift app to get rid of lots of AppleScript dialogs</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/setting-the-screen-saver-to-a-static-image/">Setting the Screen Saver to a static image</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/automator-application-to-run-script-as-root/">Automator application to run script as root</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/using-installer-choices-xml-to-modify-anyconnect-and-mcafee-deployments/">Using installer choices.xml to modify AnyConnect and McAfee deployments</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/signing-installer-packages-with-automator/">Signing Installer Packages with Automator</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/mounting-file-shares-based-on-ad-group-membership-using-enterprise-connect/">Mounting File Shares Based on AD Group Membership using Enterprise Connect</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/using-ldapsearch-to-get-ad-data/">Using ldapsearch to get AD data</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/update-to-network-geektool-script/">Update to network GeekTool script</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/find-the-most-common-user-on-a-system/">Find the most common user on a system</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/fun-with-applescript-and-notes/">Fun with AppleScript and Notes</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/new-folder-in-list-view/">New Folder in List View</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/macos-sierra-recovery-hd-changes/">macOS Sierra Recovery HD Changes</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/unhide-users-in-10-9-3/">Unhide /Users in 10.9.3</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/keyboard-shortcut-for-system-preferences/">Keyboard shortcut for System Preferences</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/control-if-a-window-opens-when-a-volume-mounts/">Control if a window opens when a volume mounts</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

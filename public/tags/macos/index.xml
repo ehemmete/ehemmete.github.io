@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>MacOS on My Thoughts</title>
+    <link>http://localhost:1313/tags/macos/</link>
+    <description>Recent content in MacOS on My Thoughts</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>Eric Hemmeter</copyright>
+    <lastBuildDate>Wed, 29 Nov 2023 01:51:20 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/macos/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Virtualizing macOS with copy/paste and drag &amp;amp; drop</title>
+      <link>http://localhost:1313/posts/virtualizing-macos-with-copy-paste-and-drag-drop-comments/</link>
+      <pubDate>Wed, 29 Nov 2023 01:51:20 +0000</pubDate>
+      <guid>http://localhost:1313/posts/virtualizing-macos-with-copy-paste-and-drag-drop-comments/</guid>
+      <description>&lt;h4 id=&#34;heading&#34;&gt;&lt;/h4&gt;&#xA;&lt;p&gt;&lt;a href=&#34;%22dricci@rma.edu%22&#34;&gt;Dan&lt;/a&gt; - &lt;!-- raw HTML omitted --&gt;Nov 3, 2023&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;&#xA;&lt;p&gt;How does this work with serial numbers? Can you enroll an Apple Silicon VM into an MDM for testing purposes?&lt;/p&gt;&#xA;&lt;!-- raw HTML omitted --&gt;&#xA;&lt;p&gt;No, I&amp;rsquo;m not aware of any way to do that on M# series Macs.&lt;/p&gt;&#xA;&lt;!-- raw HTML omitted --&gt;</description>
+    </item>
+    <item>
+      <title>Virtualizing macOS with copy/paste and drag &amp;amp; drop</title>
+      <link>http://localhost:1313/posts/virtualizing-macos-with-copy-paste-and-drag-drop/</link>
+      <pubDate>Wed, 29 Nov 2023 01:51:20 +0000</pubDate>
+      <guid>http://localhost:1313/posts/virtualizing-macos-with-copy-paste-and-drag-drop/</guid>
+      <description>&lt;p&gt;With Apple adding their &lt;a href=&#34;https://developer.apple.com/documentation/virtualization&#34;&gt;Virtualization&lt;/a&gt; &lt;a href=&#34;https://developer.apple.com/documentation/virtualization&#34;&gt;Framework&lt;/a&gt;, there are several options for virtualizing macOS (and others) on our M# based Macs. I use VMs for connecting to some of our customer networks that require full-tunnel VPN. One common complaint is that these don&amp;rsquo;t offer copy/paste or drag and drop from the host to or from the guest. A workaround for this is to use Apple&amp;rsquo;s Screen Sharing or Remote Desktop application to connect to the VM. Because of this, I like to use &lt;a href=&#34;https://github.com/cirruslabs/tart&#34;&gt;Tart&lt;/a&gt; as my VM software because it offers a no gui option. I have an AppleScript start it up in a particular way.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Swift mountshare command line tool</title>
+      <link>http://localhost:1313/posts/swift-mountshare-command-line-tool/</link>
+      <pubDate>Mon, 03 Jul 2023 09:52:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/swift-mountshare-command-line-tool/</guid>
+      <description>&lt;p&gt;There have been many times over the years of my career where I have wanted to script mounting a file share for a user. There are several ways to make this happen from manually adding a file share to a user&amp;rsquo;s Login Items, using AppleScript, and scripting the &lt;code&gt;mount&lt;/code&gt; command. Eventually I found and settled on using a python script with the python objc bridge from an &lt;a href=&#34;https://gist.github.com/pudquick/1362a8908be01e23041d&#34;&gt;old frogor/pudquick gist&lt;/a&gt;. This worked great with the built in python on macOS and uses the same bits of the OS that the Connect to Server… dialog does. I was able to &lt;a href=&#34;https://sneakypockets.wordpress.com/2016/09/26/mounting-file-shares-based-on-ad-group-membership-using-enterprise-connect/&#34;&gt;automatically mount shares based on AD group&lt;/a&gt; at a previous job using this script. Eventually Apple stopped including python in macOS, so I had to &lt;a href=&#34;https://github.com/macadmins/python&#34;&gt;install another one&lt;/a&gt;. There were some modifications needed to make it work with python 3 (see the comments on the gist) and installing python everywhere for this one thing seemed like overkill. So I started working on a Swift implementation using &lt;a href=&#34;https://swiftpackageindex.com/apple/swift-argument-parser/1.2.2/documentation/argumentparser&#34;&gt;swift argument parser&lt;/a&gt;. Since the python script calls into the system a lot of the pieces were already laid out and then I found a mosen &lt;a href=&#34;https://gist.github.com/mosen/2ddf85824fbb5564aef527b60beb4669&#34;&gt;gist that laid out basically all the options and proper terms&lt;/a&gt;.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

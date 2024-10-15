@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>High Sierra on My Thoughts</title>
+    <link>http://localhost:1313/tags/high-sierra/</link>
+    <description>Recent content in High Sierra on My Thoughts</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>Eric Hemmeter</copyright>
+    <lastBuildDate>Fri, 02 Feb 2018 20:28:49 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/high-sierra/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Setting the Screen Saver to a static image</title>
+      <link>http://localhost:1313/posts/setting-the-screen-saver-to-a-static-image/</link>
+      <pubDate>Fri, 02 Feb 2018 20:28:49 +0000</pubDate>
+      <guid>http://localhost:1313/posts/setting-the-screen-saver-to-a-static-image/</guid>
+      <description>&lt;p&gt;On our Windows systems we have a static image as our screen saver and I wanted to match that on our Macs.  There are several options in the Screen Saver settings of System Preferences.  I needed to figure out how to set a default across all our Macs with a script.&lt;img src=&#34;https://sneakypockets.wordpress.com/wp-content/uploads/2018/02/screen-shot-2018-02-02-at-1-55-51-pm.png&#34; alt=&#34;Screen Shot 2018-02-02 at 1.55.51 PM.png&#34;&gt;  We wanted a single image statically on the screen.  By making a folder with one image in it, we can use the slideshow options to show our single image. After setting things up the way I wanted, I looked around to see where the settings were stored.  You can use something like &lt;a href=&#34;https://fsmonitor.com&#34;&gt;FSMonitor&lt;/a&gt; to watch what files are edited when you change things in System Preferences.  These settings are per user and per device, so they end up in ~/Library/ByHost/com.apple.screensaver.plist, ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist, and ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist.  If you select other options, you might not need all of these files. To work with this files, use &lt;code&gt;defaults -currentHost read [preference-domain]&lt;/code&gt;. First look at com.apple.screensaver.plist:&lt;code&gt;$ defaults -currentHost read com.apple.screensaver { PrefsVersion = 100; idleTime = 1800; moduleDict =     { moduleName = iLifeSlideshows; path = &amp;quot;/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver&amp;quot;; type = 0; }; }&lt;/code&gt;Then ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist:&lt;code&gt;defaults -currentHost read com.apple.ScreenSaver.iLifeSlideShows { styleKey = Classic; }&lt;/code&gt;Then finally, ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist:&lt;code&gt;defaults -currentHost read com.apple.ScreenSaverPhotoChooser { CustomFolderDict =     { identifier = &amp;quot;/Library/Screen Savers/CompanyName&amp;quot;; name = CompanyName; }; LastViewedPhotoPath = &amp;quot;&amp;quot;; SelectedFolderPath = &amp;quot;/Library/Screen Savers/CompanyName&amp;quot;; SelectedSource = 4; }&lt;/code&gt;To set these, we use a very similar command: &lt;code&gt;defaults -currentHost write [preference-domain] [key] [value]&lt;/code&gt;. After some testing I&amp;rsquo;ve found we just need:```&#xA;#!/bin/sh&#xA;defaults -currentHost write com.apple.screensaver moduleDict -dict moduleName iLifeSlideshows path &amp;ldquo;/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver&amp;rdquo; type 0&#xA;defaults -currentHost write com.apple.ScreenSaver.iLifeSlideShows styleKey Classic&#xA;defaults -currentHost write com.apple.ScreenSaverPhotoChooser SelectedFolderPath &amp;ldquo;/Library/Screen Savers/CompanyName&amp;rdquo;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Automator application to run script as root</title>
+      <link>http://localhost:1313/posts/automator-application-to-run-script-as-root-comments/</link>
+      <pubDate>Tue, 12 Dec 2017 15:36:31 +0000</pubDate>
+      <guid>http://localhost:1313/posts/automator-application-to-run-script-as-root-comments/</guid>
+      <description>&lt;h4 id=&#34;heading&#34;&gt;&lt;/h4&gt;&#xA;&lt;p&gt;&lt;a href=&#34;http://rayleighwickfordlabour.org.uk&#34; title=&#34;n.martin@rayleighwickfordlabour.org.uk&#34;&gt;n.martin&lt;/a&gt; - &lt;!-- raw HTML omitted --&gt;Dec 2, 2017&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;&#xA;&lt;p&gt;Heyas - it looks like you might be using Jamf from the last screenshot (jamfhelper?). If you&amp;rsquo;re running Jamf Pro 10, you could put the installer policy in Self Service and get a URL that opens Self Service and runs that policy automatically: &lt;a href=&#34;http://docs.jamf.com/10.0.0/jamf-pro/administrator-guide/Making&#34;&gt;http://docs.jamf.com/10.0.0/jamf-pro/administrator-guide/Making&lt;/a&gt;_Items_Available_to_Users_in_Jamf_Self_Service_for_macOS.html There&amp;rsquo;s a section on that page; Item URLs An AppleScript with: do shell script &amp;ldquo;open &amp;quot; might work (haven&amp;rsquo;t tested but would be really interested).&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Automator application to run script as root</title>
+      <link>http://localhost:1313/posts/automator-application-to-run-script-as-root/</link>
+      <pubDate>Tue, 12 Dec 2017 15:36:31 +0000</pubDate>
+      <guid>http://localhost:1313/posts/automator-application-to-run-script-as-root/</guid>
+      <description>&lt;p&gt;I was recently asked to create a shortcut on our users&amp;rsquo; Desktops to kick off the High Sierra install. We are caching the installer through our management system. In the past I have created a shortcut to the installer on their Desktop, but that required them to click through the many continue buttons. This method will use the startosinstall script from &lt;a href=&#34;https://github.com/bp88/JSS-Scripts/blob/master/OS_Upgrade.sh&#34;&gt;Slack member @bp&lt;/a&gt; to start the install with minimal user interaction. I wrap that shell script (with the appropriate modifications for my environment) in an Automator application, but to have the script run as root, I call it with Run AppleScript using the &lt;code&gt;do shell script ... with administrator privileges&lt;/code&gt; form. &lt;img src=&#34;https://sneakypockets.wordpress.com/wp-content/uploads/2017/12/automatorinstaller.png&#34; alt=&#34;AutomatorInstaller.png&#34;&gt; The full AppleScript is&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

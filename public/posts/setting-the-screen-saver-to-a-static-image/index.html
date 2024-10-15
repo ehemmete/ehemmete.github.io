@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Setting the Screen Saver to a static image | My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="On our Windows systems we have a static image as our screen saver and I wanted to match that on our Macs.  There are several options in the Screen Saver settings of System Preferences.  I needed to figure out how to set a default across all our Macs with a script.  We wanted a single image statically on the screen.  By making a folder with one image in it, we can use the slideshow options to show our single image. After setting things up the way I wanted, I looked around to see where the settings were stored.  You can use something like FSMonitor to watch what files are edited when you change things in System Preferences.  These settings are per user and per device, so they end up in ~/Library/ByHost/com.apple.screensaver.plist, ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist, and ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist.  If you select other options, you might not need all of these files. To work with this files, use defaults -currentHost read [preference-domain]. First look at com.apple.screensaver.plist:$ defaults -currentHost read com.apple.screensaver { PrefsVersion = 100; idleTime = 1800; moduleDict =     { moduleName = iLifeSlideshows; path = &quot;/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver&quot;; type = 0; }; }Then ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist:defaults -currentHost read com.apple.ScreenSaver.iLifeSlideShows { styleKey = Classic; }Then finally, ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist:defaults -currentHost read com.apple.ScreenSaverPhotoChooser { CustomFolderDict =     { identifier = &quot;/Library/Screen Savers/CompanyName&quot;; name = CompanyName; }; LastViewedPhotoPath = &quot;&quot;; SelectedFolderPath = &quot;/Library/Screen Savers/CompanyName&quot;; SelectedSource = 4; }To set these, we use a very similar command: defaults -currentHost write [preference-domain] [key] [value]. After some testing I&rsquo;ve found we just need:```
+#!/bin/sh
+defaults -currentHost write com.apple.screensaver moduleDict -dict moduleName iLifeSlideshows path &ldquo;/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver&rdquo; type 0
+defaults -currentHost write com.apple.ScreenSaver.iLifeSlideShows styleKey Classic
+defaults -currentHost write com.apple.ScreenSaverPhotoChooser SelectedFolderPath &ldquo;/Library/Screen Savers/CompanyName&rdquo;">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/posts/setting-the-screen-saver-to-a-static-image/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/posts/setting-the-screen-saver-to-a-static-image/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Setting the Screen Saver to a static image">
+  <meta property="og:description" content="On our Windows systems we have a static image as our screen saver and I wanted to match that on our Macs. There are several options in the Screen Saver settings of System Preferences. I needed to figure out how to set a default across all our Macs with a script. We wanted a single image statically on the screen. By making a folder with one image in it, we can use the slideshow options to show our single image. After setting things up the way I wanted, I looked around to see where the settings were stored. You can use something like FSMonitor to watch what files are edited when you change things in System Preferences. These settings are per user and per device, so they end up in ~/Library/ByHost/com.apple.screensaver.plist, ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist, and ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist. If you select other options, you might not need all of these files. To work with this files, use defaults -currentHost read [preference-domain]. First look at com.apple.screensaver.plist:$ defaults -currentHost read com.apple.screensaver { PrefsVersion = 100; idleTime = 1800; moduleDict = { moduleName = iLifeSlideshows; path = &#34;/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver&#34;; type = 0; }; }Then ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist:defaults -currentHost read com.apple.ScreenSaver.iLifeSlideShows { styleKey = Classic; }Then finally, ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist:defaults -currentHost read com.apple.ScreenSaverPhotoChooser { CustomFolderDict = { identifier = &#34;/Library/Screen Savers/CompanyName&#34;; name = CompanyName; }; LastViewedPhotoPath = &#34;&#34;; SelectedFolderPath = &#34;/Library/Screen Savers/CompanyName&#34;; SelectedSource = 4; }To set these, we use a very similar command: defaults -currentHost write [preference-domain] [key] [value]. After some testing I’ve found we just need:``` #!/bin/sh defaults -currentHost write com.apple.screensaver moduleDict -dict moduleName iLifeSlideshows path “/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver” type 0 defaults -currentHost write com.apple.ScreenSaver.iLifeSlideShows styleKey Classic defaults -currentHost write com.apple.ScreenSaverPhotoChooser SelectedFolderPath “/Library/Screen Savers/CompanyName”">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2018-02-02T20:28:49+00:00">
+    <meta property="article:modified_time" content="2018-02-02T20:28:49+00:00">
+    <meta property="article:tag" content="Casper">
+    <meta property="article:tag" content="High Sierra">
+    <meta property="article:tag" content="Packaging">
+    <meta property="article:tag" content="Shell Script">
+    <meta property="article:tag" content="Sierra">
+
+  <meta itemprop="name" content="Setting the Screen Saver to a static image">
+  <meta itemprop="description" content="On our Windows systems we have a static image as our screen saver and I wanted to match that on our Macs. There are several options in the Screen Saver settings of System Preferences. I needed to figure out how to set a default across all our Macs with a script. We wanted a single image statically on the screen. By making a folder with one image in it, we can use the slideshow options to show our single image. After setting things up the way I wanted, I looked around to see where the settings were stored. You can use something like FSMonitor to watch what files are edited when you change things in System Preferences. These settings are per user and per device, so they end up in ~/Library/ByHost/com.apple.screensaver.plist, ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist, and ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist. If you select other options, you might not need all of these files. To work with this files, use defaults -currentHost read [preference-domain]. First look at com.apple.screensaver.plist:$ defaults -currentHost read com.apple.screensaver { PrefsVersion = 100; idleTime = 1800; moduleDict = { moduleName = iLifeSlideshows; path = &#34;/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver&#34;; type = 0; }; }Then ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist:defaults -currentHost read com.apple.ScreenSaver.iLifeSlideShows { styleKey = Classic; }Then finally, ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist:defaults -currentHost read com.apple.ScreenSaverPhotoChooser { CustomFolderDict = { identifier = &#34;/Library/Screen Savers/CompanyName&#34;; name = CompanyName; }; LastViewedPhotoPath = &#34;&#34;; SelectedFolderPath = &#34;/Library/Screen Savers/CompanyName&#34;; SelectedSource = 4; }To set these, we use a very similar command: defaults -currentHost write [preference-domain] [key] [value]. After some testing I’ve found we just need:``` #!/bin/sh defaults -currentHost write com.apple.screensaver moduleDict -dict moduleName iLifeSlideshows path “/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver” type 0 defaults -currentHost write com.apple.ScreenSaver.iLifeSlideShows styleKey Classic defaults -currentHost write com.apple.ScreenSaverPhotoChooser SelectedFolderPath “/Library/Screen Savers/CompanyName”">
+  <meta itemprop="datePublished" content="2018-02-02T20:28:49+00:00">
+  <meta itemprop="dateModified" content="2018-02-02T20:28:49+00:00">
+  <meta itemprop="wordCount" content="406">
+  <meta itemprop="keywords" content="Casper,High Sierra,Packaging,Shell Script,Sierra">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Setting the Screen Saver to a static image">
+  <meta name="twitter:description" content="On our Windows systems we have a static image as our screen saver and I wanted to match that on our Macs. There are several options in the Screen Saver settings of System Preferences. I needed to figure out how to set a default across all our Macs with a script. We wanted a single image statically on the screen. By making a folder with one image in it, we can use the slideshow options to show our single image. After setting things up the way I wanted, I looked around to see where the settings were stored. You can use something like FSMonitor to watch what files are edited when you change things in System Preferences. These settings are per user and per device, so they end up in ~/Library/ByHost/com.apple.screensaver.plist, ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist, and ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist. If you select other options, you might not need all of these files. To work with this files, use defaults -currentHost read [preference-domain]. First look at com.apple.screensaver.plist:$ defaults -currentHost read com.apple.screensaver { PrefsVersion = 100; idleTime = 1800; moduleDict = { moduleName = iLifeSlideshows; path = &#34;/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver&#34;; type = 0; }; }Then ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist:defaults -currentHost read com.apple.ScreenSaver.iLifeSlideShows { styleKey = Classic; }Then finally, ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist:defaults -currentHost read com.apple.ScreenSaverPhotoChooser { CustomFolderDict = { identifier = &#34;/Library/Screen Savers/CompanyName&#34;; name = CompanyName; }; LastViewedPhotoPath = &#34;&#34;; SelectedFolderPath = &#34;/Library/Screen Savers/CompanyName&#34;; SelectedSource = 4; }To set these, we use a very similar command: defaults -currentHost write [preference-domain] [key] [value]. After some testing I’ve found we just need:``` #!/bin/sh defaults -currentHost write com.apple.screensaver moduleDict -dict moduleName iLifeSlideshows path “/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver” type 0 defaults -currentHost write com.apple.ScreenSaver.iLifeSlideShows styleKey Classic defaults -currentHost write com.apple.ScreenSaverPhotoChooser SelectedFolderPath “/Library/Screen Savers/CompanyName”">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Setting the Screen Saver to a static image</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2018-02-02T20:28:49Z">February 2, 2018</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>On our Windows systems we have a static image as our screen saver and I wanted to match that on our Macs.  There are several options in the Screen Saver settings of System Preferences.  I needed to figure out how to set a default across all our Macs with a script.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2018/02/screen-shot-2018-02-02-at-1-55-51-pm.png" alt="Screen Shot 2018-02-02 at 1.55.51 PM.png">  We wanted a single image statically on the screen.  By making a folder with one image in it, we can use the slideshow options to show our single image. After setting things up the way I wanted, I looked around to see where the settings were stored.  You can use something like <a href="https://fsmonitor.com">FSMonitor</a> to watch what files are edited when you change things in System Preferences.  These settings are per user and per device, so they end up in ~/Library/ByHost/com.apple.screensaver.plist, ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist, and ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist.  If you select other options, you might not need all of these files. To work with this files, use <code>defaults -currentHost read [preference-domain]</code>. First look at com.apple.screensaver.plist:<code>$ defaults -currentHost read com.apple.screensaver { PrefsVersion = 100; idleTime = 1800; moduleDict =     { moduleName = iLifeSlideshows; path = &quot;/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver&quot;; type = 0; }; }</code>Then ~/Library/ByHost/com.apple.ScreenSaver.iLifeSlideShows.plist:<code>defaults -currentHost read com.apple.ScreenSaver.iLifeSlideShows { styleKey = Classic; }</code>Then finally, ~/Library/ByHost/com.apple.ScreenSaverPhotoChooser.plist:<code>defaults -currentHost read com.apple.ScreenSaverPhotoChooser { CustomFolderDict =     { identifier = &quot;/Library/Screen Savers/CompanyName&quot;; name = CompanyName; }; LastViewedPhotoPath = &quot;&quot;; SelectedFolderPath = &quot;/Library/Screen Savers/CompanyName&quot;; SelectedSource = 4; }</code>To set these, we use a very similar command: <code>defaults -currentHost write [preference-domain] [key] [value]</code>. After some testing I&rsquo;ve found we just need:```
+#!/bin/sh
+defaults -currentHost write com.apple.screensaver moduleDict -dict moduleName iLifeSlideshows path &ldquo;/System/Library/Frameworks/ScreenSaver.framework/Resources/iLifeSlideshows.saver&rdquo; type 0
+defaults -currentHost write com.apple.ScreenSaver.iLifeSlideShows styleKey Classic
+defaults -currentHost write com.apple.ScreenSaverPhotoChooser SelectedFolderPath &ldquo;/Library/Screen Savers/CompanyName&rdquo;</p>
+<pre tabindex="0"><code class="language-Now" data-lang="Now">
+1.  I need a package that puts my image in a known folder (&#34;/Library/Screen Savers/CompanyName&#34;)
+2.  A way to run this script for the user. There are several ways to do this; LaunchAgent, Self Service, or what I use is [Outset](https://github.com/chilcote/outset). Outset could set this every login, but I don&#39;t want to enforce it, so I use the Login-Once option.  The important thing to remember is that this is a per user setting, so if you try to set these as root, you will need to do some extra work with permissions.
+
+These could be in one package or separate.  Since I implemented Outset after I had already created the image package, I have separate packages for the image and the script.  There are several options for creating your packages, but I really like [Packages](http://s.sudre.free.fr/Software/Packages/about.html).
+</code></pre><ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/casper/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Casper</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/high-sierra/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">High Sierra</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/packaging/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Packaging</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/shell-script/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Shell Script</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/sierra/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Sierra</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/posts/automator-application-to-run-script-as-root/">Automator application to run script as root</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/using-installer-choices-xml-to-modify-anyconnect-and-mcafee-deployments/">Using installer choices.xml to modify AnyConnect and McAfee deployments</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/signing-installer-packages-with-automator/">Signing Installer Packages with Automator</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/mounting-file-shares-based-on-ad-group-membership-using-enterprise-connect/">Mounting File Shares Based on AD Group Membership using Enterprise Connect</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/using-ldapsearch-to-get-ad-data/">Using ldapsearch to get AD data</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/macos-sierra-recovery-hd-changes/">macOS Sierra Recovery HD Changes</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/capturing-information-while-running-casper-imaging/">Capturing information while running Casper Imaging</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/update-to-network-geektool-script/">Update to network GeekTool script</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/unhide-users-in-10-9-3/">Unhide /Users in 10.9.3</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/find-the-most-common-user-on-a-system/">Find the most common user on a system</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

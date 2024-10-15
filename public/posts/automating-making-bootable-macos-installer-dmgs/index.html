@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Automating making bootable macOS installer dmgs | My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="macOS Mojave should be released on Mon (9/24). At my employer, we will not be ready to support it yet as we are waiting for a couple of vendors to update their products. So we will need to be able to build High Sierra Macs without relying on Internet Recovery for erasing and reinstalling macOS. To make things more confusing, macOS High Sierra doesn&rsquo;t have a unified installer for all models. Most use 17G65, but the 2018 MacBook Pros need 17G2208. Both can be downloaded today (before Mojave comes out) with installinstallmacos.py.  Instead of manually making USB drives with createinstallmedia for both and then making dmgs to distribute to our deskside team across the country, I wanted to automate this process. I wrote a script that takes the output of installinstallmacos.py as input, creates an empty writable disk image, uses the createinstallmedia command to make the new disk image a bootable macOS installer, converts the installer dmg to compressed, and scans it for restore.  I have tested it with both High Sierra and Mojave installers. See makeBootableInstaller for the script and details. The way to use it is to first use installinstallmacos.py to download the version and build you need.  Then run:">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/posts/automating-making-bootable-macos-installer-dmgs/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/posts/automating-making-bootable-macos-installer-dmgs/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Automating making bootable macOS installer dmgs">
+  <meta property="og:description" content="macOS Mojave should be released on Mon (9/24). At my employer, we will not be ready to support it yet as we are waiting for a couple of vendors to update their products. So we will need to be able to build High Sierra Macs without relying on Internet Recovery for erasing and reinstalling macOS. To make things more confusing, macOS High Sierra doesn’t have a unified installer for all models. Most use 17G65, but the 2018 MacBook Pros need 17G2208. Both can be downloaded today (before Mojave comes out) with installinstallmacos.py. Instead of manually making USB drives with createinstallmedia for both and then making dmgs to distribute to our deskside team across the country, I wanted to automate this process. I wrote a script that takes the output of installinstallmacos.py as input, creates an empty writable disk image, uses the createinstallmedia command to make the new disk image a bootable macOS installer, converts the installer dmg to compressed, and scans it for restore. I have tested it with both High Sierra and Mojave installers. See makeBootableInstaller for the script and details. The way to use it is to first use installinstallmacos.py to download the version and build you need. Then run:">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2018-09-21T20:04:56+00:00">
+    <meta property="article:modified_time" content="2018-09-21T20:04:56+00:00">
+    <meta property="article:tag" content="Uncategorized">
+
+  <meta itemprop="name" content="Automating making bootable macOS installer dmgs">
+  <meta itemprop="description" content="macOS Mojave should be released on Mon (9/24). At my employer, we will not be ready to support it yet as we are waiting for a couple of vendors to update their products. So we will need to be able to build High Sierra Macs without relying on Internet Recovery for erasing and reinstalling macOS. To make things more confusing, macOS High Sierra doesn’t have a unified installer for all models. Most use 17G65, but the 2018 MacBook Pros need 17G2208. Both can be downloaded today (before Mojave comes out) with installinstallmacos.py. Instead of manually making USB drives with createinstallmedia for both and then making dmgs to distribute to our deskside team across the country, I wanted to automate this process. I wrote a script that takes the output of installinstallmacos.py as input, creates an empty writable disk image, uses the createinstallmedia command to make the new disk image a bootable macOS installer, converts the installer dmg to compressed, and scans it for restore. I have tested it with both High Sierra and Mojave installers. See makeBootableInstaller for the script and details. The way to use it is to first use installinstallmacos.py to download the version and build you need. Then run:">
+  <meta itemprop="datePublished" content="2018-09-21T20:04:56+00:00">
+  <meta itemprop="dateModified" content="2018-09-21T20:04:56+00:00">
+  <meta itemprop="wordCount" content="269">
+  <meta itemprop="keywords" content="Uncategorized">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Automating making bootable macOS installer dmgs">
+  <meta name="twitter:description" content="macOS Mojave should be released on Mon (9/24). At my employer, we will not be ready to support it yet as we are waiting for a couple of vendors to update their products. So we will need to be able to build High Sierra Macs without relying on Internet Recovery for erasing and reinstalling macOS. To make things more confusing, macOS High Sierra doesn’t have a unified installer for all models. Most use 17G65, but the 2018 MacBook Pros need 17G2208. Both can be downloaded today (before Mojave comes out) with installinstallmacos.py. Instead of manually making USB drives with createinstallmedia for both and then making dmgs to distribute to our deskside team across the country, I wanted to automate this process. I wrote a script that takes the output of installinstallmacos.py as input, creates an empty writable disk image, uses the createinstallmedia command to make the new disk image a bootable macOS installer, converts the installer dmg to compressed, and scans it for restore. I have tested it with both High Sierra and Mojave installers. See makeBootableInstaller for the script and details. The way to use it is to first use installinstallmacos.py to download the version and build you need. Then run:">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Automating making bootable macOS installer dmgs</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2018-09-21T20:04:56Z">September 21, 2018</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>macOS Mojave should be released on Mon (9/24). At my employer, we will not be ready to support it yet as we are waiting for a couple of vendors to update their products. So we will need to be able to build High Sierra Macs without relying on Internet Recovery for erasing and reinstalling macOS. To make things more confusing, macOS High Sierra doesn&rsquo;t have a unified installer for all models. Most use 17G65, but the 2018 MacBook Pros need 17G2208. Both can be downloaded today (before Mojave comes out) with <a href="https://github.com/munki/macadmin-scripts/blob/master/installinstallmacos.py">installinstallmacos.py</a>.  Instead of manually making USB drives with createinstallmedia for both and then making dmgs to distribute to our deskside team across the country, I wanted to automate this process. I wrote a script that takes the output of installinstallmacos.py as input, creates an empty writable disk image, uses the createinstallmedia command to make the new disk image a bootable macOS installer, converts the installer dmg to compressed, and scans it for restore.  I have tested it with both High Sierra and Mojave installers. See <a href="https://github.com/ehemmete/makeBootableInstaller">makeBootableInstaller</a> for the script and details. The way to use it is to first use installinstallmacos.py to download the version and build you need.  Then run:</p>
+<blockquote>
+<p>sudo makeBootableInstaller.sh ~/Install_macOS_10.13.6-17G2208.dmg</p>
+</blockquote>
+<p>You will see output like:</p>
+<blockquote>
+<p>Creating installer dmg for macOS 10.13.6 17G2208. Mounting target sparseimage. Mounting source dmg. Creating macOS install media. Erasing Disk: 0%&hellip; 10%&hellip; 20%&hellip; 30%&hellip;100%&hellip; Converting sparseimage to dmg. Scanning dmg for restore Copied installer dmg to ~ and cleaned up.</p>
+</blockquote>
+<p>And you will have Install_macOS_High_Sierra_10.13.6_17G2208_Installer.dmg in your home folder.  This dmg is ready to be restored to an external drive.</p>
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/uncategorized/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Uncategorized</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/posts/approve-uamdm-and-repush-kext-profile/">Approve UAMDM and repush KEXT Profile</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/retry-a-failed-profile-from-a-client/">Retry a failed Profile from a client</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/filecruiser-where-are-my-files/">FileCruiser - Where are my files?</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/network-services-and-ips/">Network Services and IPs</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

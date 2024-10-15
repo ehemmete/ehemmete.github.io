@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Using a Swift app to get rid of lots of AppleScript dialogs | My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="
+Marty Tentor - Feb 5, 2021
+Thanks for the example. I have a similar challenge, getting a one window gui for applescipt. Just want to confirm that you are using Swift to generate text files and then running Applescript to get the data from the text files and running the real work on the targeted application. Is the Applescript being run separately,(called by the user) or is the Applescript call coming from within the Swift program?">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/posts/using-a-swift-app-to-get-rid-of-lots-of-applescript-dialogs-comments/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/posts/using-a-swift-app-to-get-rid-of-lots-of-applescript-dialogs-comments/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Using a Swift app to get rid of lots of AppleScript dialogs">
+  <meta property="og:description" content=" Marty Tentor - Feb 5, 2021
+Thanks for the example. I have a similar challenge, getting a one window gui for applescipt. Just want to confirm that you are using Swift to generate text files and then running Applescript to get the data from the text files and running the real work on the targeted application. Is the Applescript being run separately,(called by the user) or is the Applescript call coming from within the Swift program?">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2019-04-15T13:17:32+00:00">
+    <meta property="article:modified_time" content="2019-04-15T13:17:32+00:00">
+    <meta property="article:tag" content="OS X General">
+    <meta property="article:tag" content="Shell Script">
+    <meta property="article:tag" content="Swift">
+
+  <meta itemprop="name" content="Using a Swift app to get rid of lots of AppleScript dialogs">
+  <meta itemprop="description" content=" Marty Tentor - Feb 5, 2021
+Thanks for the example. I have a similar challenge, getting a one window gui for applescipt. Just want to confirm that you are using Swift to generate text files and then running Applescript to get the data from the text files and running the real work on the targeted application. Is the Applescript being run separately,(called by the user) or is the Applescript call coming from within the Swift program?">
+  <meta itemprop="datePublished" content="2019-04-15T13:17:32+00:00">
+  <meta itemprop="dateModified" content="2019-04-15T13:17:32+00:00">
+  <meta itemprop="wordCount" content="218">
+  <meta itemprop="keywords" content="OS X General,Shell Script,Swift">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Using a Swift app to get rid of lots of AppleScript dialogs">
+  <meta name="twitter:description" content=" Marty Tentor - Feb 5, 2021
+Thanks for the example. I have a similar challenge, getting a one window gui for applescipt. Just want to confirm that you are using Swift to generate text files and then running Applescript to get the data from the text files and running the real work on the targeted application. Is the Applescript being run separately,(called by the user) or is the Applescript call coming from within the Swift program?">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Using a Swift app to get rid of lots of AppleScript dialogs</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2019-04-15T13:17:32Z">April 15, 2019</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><h4 id="heading"></h4>
+<p><a href="https://www.arminip.com/" title="mtentor@arminip.com">Marty Tentor</a> - <!-- raw HTML omitted -->Feb 5, 2021<!-- raw HTML omitted --></p>
+<p>Thanks for the example. I have a similar challenge, getting a one window gui for applescipt. Just want to confirm that you are using Swift to generate text files and then running Applescript to get the data from the text files and running the real work on the targeted application. Is the Applescript being run separately,(called by the user) or is the Applescript call coming from within the Swift program?</p>
+<!-- raw HTML omitted -->
+<p>In my use case, the collected data in the text files is read in by Jamf when the Mac delivers inventory. If I were trying to wrap this in a larger AppleScript (or shell script), I would probably have the outer script start the swift app and then loop waiting for the last file to exist and then continue after that.</p>
+<!-- raw HTML omitted -->
+<p>I&rsquo;m on it! I will start with a SwiftUI dialog. Try to output a dictionary or JSON. I have about 20 fields to transfer to applescript to drive a Adobe Illustrator application. It&rsquo;s all new to me.</p>
+<!-- raw HTML omitted -->
+<p>[…] which can be much to frequent or not frequent enough.  So I rewrote it with Xcode in Swift. I have recently been doing more with Swift and was inspired by Macshome’s workshop at PSU MacAdmin 2019. In that workshop he showed off […]</p>
+<!-- raw HTML omitted -->
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/os-x-general/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">OS X General</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/shell-script/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Shell Script</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/swift/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Swift</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/posts/using-a-swift-app-to-get-rid-of-lots-of-applescript-dialogs/">Using a Swift app to get rid of lots of AppleScript dialogs</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/automator-application-to-run-script-as-root/">Automator application to run script as root</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/automator-application-to-run-script-as-root-comments/">Automator application to run script as root</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/signing-installer-packages-with-automator-comments/">Signing Installer Packages with Automator</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/signing-installer-packages-with-automator/">Signing Installer Packages with Automator</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/mounting-file-shares-based-on-ad-group-membership-using-enterprise-connect-comments/">Mounting File Shares Based on AD Group Membership using Enterprise Connect</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/mounting-file-shares-based-on-ad-group-membership-using-enterprise-connect/">Mounting File Shares Based on AD Group Membership using Enterprise Connect</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/using-ldapsearch-to-get-ad-data/">Using ldapsearch to get AD data</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/using-ldapsearch-to-get-ad-data-comments/">Using ldapsearch to get AD data</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/update-to-network-geektool-script/">Update to network GeekTool script</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/update-to-network-geektool-script-comments/">Update to network GeekTool script</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/find-the-most-common-user-on-a-system/">Find the most common user on a system</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/new-folder-in-list-view/">New Folder in List View</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/new-folder-in-list-view-comments/">New Folder in List View</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/setting-the-screen-saver-to-a-static-image/">Setting the Screen Saver to a static image</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>macOS Sierra Recovery HD Changes | My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="[Update 7/20/17] As of 10.12.6 RepairHomePermissions still fails with error: Unable to launch the underlying task process.  Also my bug report has been marked as a  DUPLICATE OF 25393689. [Update 1/26/17] As of 10.12.3 RepairHomePermissions still fails with error: Unable to launch the underlying task process. One of the areas that hasn&rsquo;t gotten much coverage with the update to Sierra is the Recovery HD. This is the minimal OS environment that lets us do things like reinstall the OS, restore a Time Machine backup, and partition volumes before an install. The other thing that Recovery allows us to do is to reset forgotten passwords. Originally, we could do this by booting off the install CD/DVD. Once those went away Recovery HD gave us a Reset Password option in the Utilities menu. That went away in Yosemite(?) but we could get the same functionality by choosing Utilities -&gt; Terminal and running the resetpassword command. This reset password utility would also allow us to reset a users home folder permissions, including the default ACLs. Now with macOS Sierra v10.12, this has changed again. To start, boot to Recovery by holding down Command-R at startup.  You will end up at a screen like:  Then open the Utilities menu and choose Terminal: In the Terminal window that open, run the resetpassword command to bring up a new assistant. Select the user you need to reset the password of and click Next.  Then you can enter the new password and confirm it.  Add a hint if you want and click Next. Finally you get confirmation of the change and can reboot.  Or if you open the Reset Password menu, you can quit to easily return to the Terminal. The piece that is missing from all that is reseting home folder permissions.  It turns out there is a new tool to (try to) do this.  Back in your terminal, enter the command RepairHomePermissions and hit Enter. Again an assistant opens and we can select the user whose home folder permissions we need to reset.  Click Next. Unfortunately, at this time (Sierra v10.12 build 16A323) the process fails. Again, you can reboot or Quit the RepairHomePermissions assistant (interestingly called ResetPassword in the menu bar). Note that RepairHomePermissions is available in a full Sierra install, but fails even sooner when run as it tries to reference /System/Installation/CDIS/KeyRecoveryAssistant.app/Contents/MacOS/KeyRecoveryAssistant, which doesn&rsquo;t exist on a standard install. Also both of these assistants will have you unlock a FileVaulted drive before asking you which user to work with. Thanks to MacAdmin Slack members mikethefifth, for asking about reseting home folder permissions which prompted these tests, and owen.pragel, for sharing the new command list that included the tantalizing RepairHomePermissions and for finding the reference to KeyRecoveryAssistant. Update: I have filed a bug about RepairHomePermissions not working. https://openradar.appspot.com/28431470">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/posts/macos-sierra-recovery-hd-changes/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/posts/macos-sierra-recovery-hd-changes/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="macOS Sierra Recovery HD Changes">
+  <meta property="og:description" content="[Update 7/20/17] As of 10.12.6 RepairHomePermissions still fails with error: Unable to launch the underlying task process. Also my bug report has been marked as a DUPLICATE OF 25393689. [Update 1/26/17] As of 10.12.3 RepairHomePermissions still fails with error: Unable to launch the underlying task process. One of the areas that hasn’t gotten much coverage with the update to Sierra is the Recovery HD. This is the minimal OS environment that lets us do things like reinstall the OS, restore a Time Machine backup, and partition volumes before an install. The other thing that Recovery allows us to do is to reset forgotten passwords. Originally, we could do this by booting off the install CD/DVD. Once those went away Recovery HD gave us a Reset Password option in the Utilities menu. That went away in Yosemite(?) but we could get the same functionality by choosing Utilities -&gt; Terminal and running the resetpassword command. This reset password utility would also allow us to reset a users home folder permissions, including the default ACLs. Now with macOS Sierra v10.12, this has changed again. To start, boot to Recovery by holding down Command-R at startup. You will end up at a screen like: Then open the Utilities menu and choose Terminal: In the Terminal window that open, run the resetpassword command to bring up a new assistant. Select the user you need to reset the password of and click Next. Then you can enter the new password and confirm it. Add a hint if you want and click Next. Finally you get confirmation of the change and can reboot. Or if you open the Reset Password menu, you can quit to easily return to the Terminal. The piece that is missing from all that is reseting home folder permissions. It turns out there is a new tool to (try to) do this. Back in your terminal, enter the command RepairHomePermissions and hit Enter. Again an assistant opens and we can select the user whose home folder permissions we need to reset. Click Next. Unfortunately, at this time (Sierra v10.12 build 16A323) the process fails. Again, you can reboot or Quit the RepairHomePermissions assistant (interestingly called ResetPassword in the menu bar). Note that RepairHomePermissions is available in a full Sierra install, but fails even sooner when run as it tries to reference /System/Installation/CDIS/KeyRecoveryAssistant.app/Contents/MacOS/KeyRecoveryAssistant, which doesn’t exist on a standard install. Also both of these assistants will have you unlock a FileVaulted drive before asking you which user to work with. Thanks to MacAdmin Slack members mikethefifth, for asking about reseting home folder permissions which prompted these tests, and owen.pragel, for sharing the new command list that included the tantalizing RepairHomePermissions and for finding the reference to KeyRecoveryAssistant. Update: I have filed a bug about RepairHomePermissions not working. https://openradar.appspot.com/28431470">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2016-09-21T20:41:40+00:00">
+    <meta property="article:modified_time" content="2016-09-21T20:41:40+00:00">
+    <meta property="article:tag" content="OS X General">
+    <meta property="article:tag" content="Sierra">
+
+  <meta itemprop="name" content="macOS Sierra Recovery HD Changes">
+  <meta itemprop="description" content="[Update 7/20/17] As of 10.12.6 RepairHomePermissions still fails with error: Unable to launch the underlying task process. Also my bug report has been marked as a DUPLICATE OF 25393689. [Update 1/26/17] As of 10.12.3 RepairHomePermissions still fails with error: Unable to launch the underlying task process. One of the areas that hasn’t gotten much coverage with the update to Sierra is the Recovery HD. This is the minimal OS environment that lets us do things like reinstall the OS, restore a Time Machine backup, and partition volumes before an install. The other thing that Recovery allows us to do is to reset forgotten passwords. Originally, we could do this by booting off the install CD/DVD. Once those went away Recovery HD gave us a Reset Password option in the Utilities menu. That went away in Yosemite(?) but we could get the same functionality by choosing Utilities -&gt; Terminal and running the resetpassword command. This reset password utility would also allow us to reset a users home folder permissions, including the default ACLs. Now with macOS Sierra v10.12, this has changed again. To start, boot to Recovery by holding down Command-R at startup. You will end up at a screen like: Then open the Utilities menu and choose Terminal: In the Terminal window that open, run the resetpassword command to bring up a new assistant. Select the user you need to reset the password of and click Next. Then you can enter the new password and confirm it. Add a hint if you want and click Next. Finally you get confirmation of the change and can reboot. Or if you open the Reset Password menu, you can quit to easily return to the Terminal. The piece that is missing from all that is reseting home folder permissions. It turns out there is a new tool to (try to) do this. Back in your terminal, enter the command RepairHomePermissions and hit Enter. Again an assistant opens and we can select the user whose home folder permissions we need to reset. Click Next. Unfortunately, at this time (Sierra v10.12 build 16A323) the process fails. Again, you can reboot or Quit the RepairHomePermissions assistant (interestingly called ResetPassword in the menu bar). Note that RepairHomePermissions is available in a full Sierra install, but fails even sooner when run as it tries to reference /System/Installation/CDIS/KeyRecoveryAssistant.app/Contents/MacOS/KeyRecoveryAssistant, which doesn’t exist on a standard install. Also both of these assistants will have you unlock a FileVaulted drive before asking you which user to work with. Thanks to MacAdmin Slack members mikethefifth, for asking about reseting home folder permissions which prompted these tests, and owen.pragel, for sharing the new command list that included the tantalizing RepairHomePermissions and for finding the reference to KeyRecoveryAssistant. Update: I have filed a bug about RepairHomePermissions not working. https://openradar.appspot.com/28431470">
+  <meta itemprop="datePublished" content="2016-09-21T20:41:40+00:00">
+  <meta itemprop="dateModified" content="2016-09-21T20:41:40+00:00">
+  <meta itemprop="wordCount" content="464">
+  <meta itemprop="keywords" content="OS X General,Sierra">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="macOS Sierra Recovery HD Changes">
+  <meta name="twitter:description" content="[Update 7/20/17] As of 10.12.6 RepairHomePermissions still fails with error: Unable to launch the underlying task process. Also my bug report has been marked as a DUPLICATE OF 25393689. [Update 1/26/17] As of 10.12.3 RepairHomePermissions still fails with error: Unable to launch the underlying task process. One of the areas that hasn’t gotten much coverage with the update to Sierra is the Recovery HD. This is the minimal OS environment that lets us do things like reinstall the OS, restore a Time Machine backup, and partition volumes before an install. The other thing that Recovery allows us to do is to reset forgotten passwords. Originally, we could do this by booting off the install CD/DVD. Once those went away Recovery HD gave us a Reset Password option in the Utilities menu. That went away in Yosemite(?) but we could get the same functionality by choosing Utilities -&gt; Terminal and running the resetpassword command. This reset password utility would also allow us to reset a users home folder permissions, including the default ACLs. Now with macOS Sierra v10.12, this has changed again. To start, boot to Recovery by holding down Command-R at startup. You will end up at a screen like: Then open the Utilities menu and choose Terminal: In the Terminal window that open, run the resetpassword command to bring up a new assistant. Select the user you need to reset the password of and click Next. Then you can enter the new password and confirm it. Add a hint if you want and click Next. Finally you get confirmation of the change and can reboot. Or if you open the Reset Password menu, you can quit to easily return to the Terminal. The piece that is missing from all that is reseting home folder permissions. It turns out there is a new tool to (try to) do this. Back in your terminal, enter the command RepairHomePermissions and hit Enter. Again an assistant opens and we can select the user whose home folder permissions we need to reset. Click Next. Unfortunately, at this time (Sierra v10.12 build 16A323) the process fails. Again, you can reboot or Quit the RepairHomePermissions assistant (interestingly called ResetPassword in the menu bar). Note that RepairHomePermissions is available in a full Sierra install, but fails even sooner when run as it tries to reference /System/Installation/CDIS/KeyRecoveryAssistant.app/Contents/MacOS/KeyRecoveryAssistant, which doesn’t exist on a standard install. Also both of these assistants will have you unlock a FileVaulted drive before asking you which user to work with. Thanks to MacAdmin Slack members mikethefifth, for asking about reseting home folder permissions which prompted these tests, and owen.pragel, for sharing the new command list that included the tantalizing RepairHomePermissions and for finding the reference to KeyRecoveryAssistant. Update: I have filed a bug about RepairHomePermissions not working. https://openradar.appspot.com/28431470">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">macOS Sierra Recovery HD Changes</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2016-09-21T20:41:40Z">September 21, 2016</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>[Update 7/20/17] As of 10.12.6 RepairHomePermissions still fails with error: Unable to launch the underlying task process.  Also my bug report has been marked as a  DUPLICATE OF 25393689. [Update 1/26/17] As of 10.12.3 RepairHomePermissions still fails with error: Unable to launch the underlying task process. One of the areas that hasn&rsquo;t gotten much coverage with the update to Sierra is the Recovery HD. This is the minimal OS environment that lets us do things like reinstall the OS, restore a Time Machine backup, and partition volumes before an install. The other thing that Recovery allows us to do is to reset forgotten passwords. Originally, we could do this by booting off the install CD/DVD. Once those went away Recovery HD gave us a Reset Password option in the Utilities menu. That went away in Yosemite(?) but we could get the same functionality by choosing Utilities -&gt; Terminal and running the resetpassword command. This reset password utility would also allow us to reset a users home folder permissions, including the default ACLs. Now with macOS Sierra v10.12, this has changed again. To start, boot to Recovery by holding down Command-R at startup.  You will end up at a screen like: <img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-10-31-pm.png" alt="Screen Shot 2016-09-21 at 3.10.31 PM.png"> Then open the Utilities menu and choose Terminal:<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-10-55-pm.png" alt="Screen Shot 2016-09-21 at 3.10.55 PM.png"> In the Terminal window that open, run the resetpassword command to bring up a new assistant.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-11-11-pm.png" alt="Screen Shot 2016-09-21 at 3.11.11 PM.png"> Select the user you need to reset the password of and click Next. <img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-11-28-pm.png" alt="Screen Shot 2016-09-21 at 3.11.28 PM.png"> Then you can enter the new password and confirm it.  Add a hint if you want and click Next.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-11-42-pm.png" alt="Screen Shot 2016-09-21 at 3.11.42 PM.png"> Finally you get confirmation of the change and can reboot.  Or if you open the Reset Password menu, you can quit to easily return to the Terminal.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-11-57-pm.png" alt="Screen Shot 2016-09-21 at 3.11.57 PM.png"> The piece that is missing from all that is reseting home folder permissions.  It turns out there is a new tool to (try to) do this.  Back in your terminal, enter the command RepairHomePermissions and hit Enter.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-12-28-pm.png" alt="Screen Shot 2016-09-21 at 3.12.28 PM.png"> Again an assistant opens and we can select the user whose home folder permissions we need to reset.  Click Next.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-12-36-pm.png" alt="Screen Shot 2016-09-21 at 3.12.36 PM.png"> Unfortunately, at this time (Sierra v10.12 build 16A323) the process fails.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2016/09/screen-shot-2016-09-21-at-3-12-41-pm.png" alt="Screen Shot 2016-09-21 at 3.12.41 PM.png"> Again, you can reboot or Quit the RepairHomePermissions assistant (interestingly called ResetPassword in the menu bar). Note that RepairHomePermissions is available in a full Sierra install, but fails even sooner when run as it tries to reference /System/Installation/CDIS/KeyRecoveryAssistant.app/Contents/MacOS/KeyRecoveryAssistant, which doesn&rsquo;t exist on a standard install. Also both of these assistants will have you unlock a FileVaulted drive before asking you which user to work with. Thanks to MacAdmin Slack members mikethefifth, for asking about reseting home folder permissions which prompted these tests, and owen.pragel, for sharing the new command list that included the tantalizing RepairHomePermissions and for finding the reference to KeyRecoveryAssistant. Update: I have filed a bug about RepairHomePermissions not working. https://openradar.appspot.com/28431470</p>
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/os-x-general/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">OS X General</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/sierra/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Sierra</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/posts/update-to-network-geektool-script/">Update to network GeekTool script</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/find-the-most-common-user-on-a-system/">Find the most common user on a system</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/keyboard-shortcut-for-system-preferences/">Keyboard shortcut for System Preferences</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/control-if-a-window-opens-when-a-volume-mounts/">Control if a window opens when a volume mounts</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

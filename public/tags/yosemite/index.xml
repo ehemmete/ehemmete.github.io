@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Yosemite on My Thoughts</title>
+    <link>http://localhost:1313/tags/yosemite/</link>
+    <description>Recent content in Yosemite on My Thoughts</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <copyright>Eric Hemmeter</copyright>
+    <lastBuildDate>Tue, 05 May 2015 21:06:11 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/yosemite/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Update to network GeekTool script</title>
+      <link>http://localhost:1313/posts/update-to-network-geektool-script-comments/</link>
+      <pubDate>Tue, 05 May 2015 21:06:11 +0000</pubDate>
+      <guid>http://localhost:1313/posts/update-to-network-geektool-script-comments/</guid>
+      <description>&lt;h4 id=&#34;heading&#34;&gt;&lt;/h4&gt;&#xA;&lt;p&gt;&lt;a href=&#34;https://sneakypockets.wordpress.com/2019/07/29/shell-to-swift-with-a-bit-of-python/&#34; title=&#34;&#34;&gt;Shell to Swift with a bit of Python | My Thoughts&lt;/a&gt; - &lt;!-- raw HTML omitted --&gt;Jul 1, 2019&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;&#xA;&lt;p&gt;[…] want to make this too long. So this will be an overview of the project. For years I have had a shell script that collected some network info and it was displayed on my desktop using NerdTool and then […]&lt;/p&gt;&#xA;&lt;!-- raw HTML omitted --&gt;</description>
+    </item>
+    <item>
+      <title>Update to network GeekTool script</title>
+      <link>http://localhost:1313/posts/update-to-network-geektool-script/</link>
+      <pubDate>Tue, 05 May 2015 21:06:11 +0000</pubDate>
+      <guid>http://localhost:1313/posts/update-to-network-geektool-script/</guid>
+      <description>&lt;p&gt;I have been seeing a lot of noise in my logs about IO80211ScanManager scanning for Wi-Fi networks constantly.  I finally noticed that it was triggered by system_profiler and realized that I was using system_profiler to find my current Wi-Fi network and what channel I was connected to. See the original here: &lt;a href=&#34;https://sneakypockets.wordpress.com/2014/08/30/network-services-and-ips/&#34;&gt;https://sneakypockets.wordpress.com/2014/08/30/network-services-and-ips/&lt;/a&gt; So I changed how I find that data in my GeekTool script.  I also took the opportunity to simplify the whole thing a bit more.  Here is the new version: [code language=&amp;ldquo;bash&amp;rdquo;] #! /bin/bash connection=false services=$(networksetup -listallnetworkservices) while read service; do ip=$(networksetup -getinfo &amp;ldquo;$service&amp;rdquo; | grep &amp;ldquo;IP address&amp;rdquo; | grep -v &amp;ldquo;IPv6&amp;rdquo; | awk &amp;lsquo;{print $3}&amp;rsquo;) if [ &amp;ldquo;$ip&amp;rdquo; != &amp;quot;&amp;quot; ]; then echo &amp;ldquo;$service : $ip&amp;rdquo; connection=true if [ &amp;ldquo;$service&amp;rdquo; == &amp;ldquo;Wi-Fi&amp;rdquo; ]; then NetName=$(/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | grep SSID | grep -v BSSID | cut -d&amp;quot;:&amp;quot; -f2 | tr -d &amp;lsquo;[[:space:]]&amp;rsquo;) Channel=$(/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I | grep channel | cut -d&amp;quot;:&amp;quot; -f2 | tr -d &amp;lsquo;[[:space:]]&amp;rsquo;) echo &amp;ldquo;$NetName / $Channel&amp;rdquo; fi fi done &amp;laquo;&amp;lt;&amp;quot;$services&amp;quot; if [ $connection = false ]; then echo &amp;ldquo;No Connected Services&amp;rdquo; else extIP=$(curl -s &lt;a href=&#34;http://checkip.dyndns.org/&#34;&gt;http://checkip.dyndns.org/&lt;/a&gt; | sed &amp;rsquo;s/[a-zA-Z&amp;lt;&amp;gt;/ :]//g&amp;rsquo;) if [ &amp;ldquo;$extIP&amp;rdquo; != &amp;quot;&amp;quot; ]; then echo &amp;ldquo;External IP: $extIP&amp;rdquo; else echo &amp;ldquo;No External Connection&amp;rdquo; fi fi [/code] Instead of system_profiler the airport command to get the network name and channel.  This stopped the all the message in my logs. I also moved the name and channel logic into the main while read block. This prevents the name and channel from getting separated from the Wi-Fi network IP.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

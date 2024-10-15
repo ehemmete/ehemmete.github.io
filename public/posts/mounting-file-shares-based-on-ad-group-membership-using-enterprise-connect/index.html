@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Mounting File Shares Based on AD Group Membership using Enterprise Connect | My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="[edit] Apple changed something in macOS 10.13 High Sierra. The mount_share() function in the below python needs to be changed to set the open_options and mount_options to &lsquo;None&rsquo;. This can be done likedef mount\_share(share\_path): # Mounts a share at /Volumes, returns the mount point or raises an error sh\_url = CoreFoundation.CFURLCreateWithString(None, share\_path, None) # Set UI to reduced interaction #open\_options  = {NetFS.kNAUIOptionKey: NetFS.kNAUIOptionNoUI} # Allow mounting sub-directories of root shares #mount\_options = {NetFS.kNetFSAllowSubMountsKey: True} # Mount! result, output = NetFS.NetFSMountURLSync(sh\_url, None, None, None, None, None, None) # Check if it worked if result != 0: raise Exception(&#39;Error mounting url &quot;%s&quot;: %s&#39; % (share\_path, output)) # Return the mountpath return str(output\[0\])[/edit] In a previous post, I discussed using ldapsearch to look up user data from AD.  In this post we will use the user&rsquo;s memberOf attribute to mount the appropriate file share. Some background on my use case for this.  The company I work for has ~15,000 Windows computers in use bound to AD.  When a user logs in, a GPO runs a batch file hosted on the domain controller&rsquo;s file share.  The batch file is basically a large case statementif in group A; then     mount shares X and Y if in group B; then     mount share ZI wanted to provide our Mac users with a similar experience.  Read how below the break. Our Macs are not bound to Active Directory and we have historically had password confusion issues with network vs local passwords and keychain sync issues.  To help this we have setup Apple&rsquo;s excellent Enterprise Connect to help with that. When a Mac user is logged in and is on a network that can connect to our domain controllers (internal, VPN, etc), Enterprise Connect automatically retrieves a Kerberos Ticket Granting Ticket for the user and, optionally, confirms that the local password is in sync with the user&rsquo;s AD password and prompts the user to fix things if necessary.  Enterprise Connect can also mount file shares including the user&rsquo;s home folder.  This is handled on a per user basis or by profile.  This works great if the user wants to mount a share they use, but it doesn&rsquo;t scale well across many locations and OUs. One of the other benefits of Enterprise Connect is that it can run scripts based on a couple of triggers including a successful connection (i.e. the Mac is on the right network and a valid TGT has been granted).  Note that Enterprise Connect can only run shell scripts this way. The script to run can be configured in the preference file or via profile with the key/value pair:connectionCompletedScriptPath /Library/Scripts/LogonFileShareMounter.wrapper.shThis script is stored locally on the client system and is what calls the script that will do the actual mounting.  Before that though, we first make sure that we have the current version of the mounting script by checking an embedded serial number (similar to how DNS primary/secondaries work).  The master copy of the mounting script is hosted on the same share as the Windows batch file.  This way it can be updated whenever the Windows version is.  As long as the serial number is updated, the Mac clients will get the updated version next time they successfully connect with Enterprise Connect. https://gist.github.com/ehemmete/618c96dc364d8a40723e30692617d2a8 The script starts by creating a directory if necessary and then mounting the file share where the master script is kept.  The mount_smbfs line authenticates to the share with the Kerberos TGT  from Enterprise Connect.  Then as long as the master script can be found, the local serial is compared to the remote version.  If the remote is newer, it is copied in place of the local copy.  Then the share is unmounted and the local copy of the script is run. https://gist.github.com/ehemmete/2f893815bd03d96d89855feb4e9b7237 This script starts with the serial number that is compared against the master copy.  Then the part between the ### lines comes straight from MacAdmin Slack member and frequent gist&rsquo;er Froger/pudquick/MikeyMikey.  His gist is referenced in the script and provides a python function for mounting network shares easily and in such as way that the system treats them the same as the Connect to Server dialog box. Then we get the user&rsquo;s local account name, which in my environment is the same as their Active Directory name, and use ldapsearch to find their group memberships.  Next we need to clean up the output.  At the end we have an array of names of the groups this user is a member of.  Now we start a case-like statement similar to the Window counter part.```
+if &lsquo;Group1&rsquo; in groups:
+mount_share(&lsquo;smb://server.my.domain.com/share&rsquo;)
+mount_share(&lsquo;smb://server2.my.domain.com/share2&rsquo;)
+if &lsquo;Group2&rsquo; in groups:
+mount_share(&lsquo;smb://server3.my.domain.com/share&rsquo;)
+etc&hellip;">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/posts/mounting-file-shares-based-on-ad-group-membership-using-enterprise-connect/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/posts/mounting-file-shares-based-on-ad-group-membership-using-enterprise-connect/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Mounting File Shares Based on AD Group Membership using Enterprise Connect">
+  <meta property="og:description" content="[edit] Apple changed something in macOS 10.13 High Sierra. The mount_share() function in the below python needs to be changed to set the open_options and mount_options to ‘None’. This can be done likedef mount\_share(share\_path): # Mounts a share at /Volumes, returns the mount point or raises an error sh\_url = CoreFoundation.CFURLCreateWithString(None, share\_path, None) # Set UI to reduced interaction #open\_options = {NetFS.kNAUIOptionKey: NetFS.kNAUIOptionNoUI} # Allow mounting sub-directories of root shares #mount\_options = {NetFS.kNetFSAllowSubMountsKey: True} # Mount! result, output = NetFS.NetFSMountURLSync(sh\_url, None, None, None, None, None, None) # Check if it worked if result != 0: raise Exception(&#39;Error mounting url &#34;%s&#34;: %s&#39; % (share\_path, output)) # Return the mountpath return str(output\[0\])[/edit] In a previous post, I discussed using ldapsearch to look up user data from AD. In this post we will use the user’s memberOf attribute to mount the appropriate file share. Some background on my use case for this. The company I work for has ~15,000 Windows computers in use bound to AD. When a user logs in, a GPO runs a batch file hosted on the domain controller’s file share. The batch file is basically a large case statementif in group A; then mount shares X and Y if in group B; then mount share ZI wanted to provide our Mac users with a similar experience. Read how below the break. Our Macs are not bound to Active Directory and we have historically had password confusion issues with network vs local passwords and keychain sync issues. To help this we have setup Apple’s excellent Enterprise Connect to help with that. When a Mac user is logged in and is on a network that can connect to our domain controllers (internal, VPN, etc), Enterprise Connect automatically retrieves a Kerberos Ticket Granting Ticket for the user and, optionally, confirms that the local password is in sync with the user’s AD password and prompts the user to fix things if necessary. Enterprise Connect can also mount file shares including the user’s home folder. This is handled on a per user basis or by profile. This works great if the user wants to mount a share they use, but it doesn’t scale well across many locations and OUs. One of the other benefits of Enterprise Connect is that it can run scripts based on a couple of triggers including a successful connection (i.e. the Mac is on the right network and a valid TGT has been granted). Note that Enterprise Connect can only run shell scripts this way. The script to run can be configured in the preference file or via profile with the key/value pair:connectionCompletedScriptPath /Library/Scripts/LogonFileShareMounter.wrapper.shThis script is stored locally on the client system and is what calls the script that will do the actual mounting. Before that though, we first make sure that we have the current version of the mounting script by checking an embedded serial number (similar to how DNS primary/secondaries work). The master copy of the mounting script is hosted on the same share as the Windows batch file. This way it can be updated whenever the Windows version is. As long as the serial number is updated, the Mac clients will get the updated version next time they successfully connect with Enterprise Connect. https://gist.github.com/ehemmete/618c96dc364d8a40723e30692617d2a8 The script starts by creating a directory if necessary and then mounting the file share where the master script is kept. The mount_smbfs line authenticates to the share with the Kerberos TGT from Enterprise Connect. Then as long as the master script can be found, the local serial is compared to the remote version. If the remote is newer, it is copied in place of the local copy. Then the share is unmounted and the local copy of the script is run. https://gist.github.com/ehemmete/2f893815bd03d96d89855feb4e9b7237 This script starts with the serial number that is compared against the master copy. Then the part between the ### lines comes straight from MacAdmin Slack member and frequent gist’er Froger/pudquick/MikeyMikey. His gist is referenced in the script and provides a python function for mounting network shares easily and in such as way that the system treats them the same as the Connect to Server dialog box. Then we get the user’s local account name, which in my environment is the same as their Active Directory name, and use ldapsearch to find their group memberships. Next we need to clean up the output. At the end we have an array of names of the groups this user is a member of. Now we start a case-like statement similar to the Window counter part.``` if ‘Group1’ in groups: mount_share(‘smb://server.my.domain.com/share’) mount_share(‘smb://server2.my.domain.com/share2’) if ‘Group2’ in groups: mount_share(‘smb://server3.my.domain.com/share’) etc…">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2016-09-26T14:27:25+00:00">
+    <meta property="article:modified_time" content="2016-09-26T14:27:25+00:00">
+    <meta property="article:tag" content="OS X General">
+    <meta property="article:tag" content="Shell Script">
+
+  <meta itemprop="name" content="Mounting File Shares Based on AD Group Membership using Enterprise Connect">
+  <meta itemprop="description" content="[edit] Apple changed something in macOS 10.13 High Sierra. The mount_share() function in the below python needs to be changed to set the open_options and mount_options to ‘None’. This can be done likedef mount\_share(share\_path): # Mounts a share at /Volumes, returns the mount point or raises an error sh\_url = CoreFoundation.CFURLCreateWithString(None, share\_path, None) # Set UI to reduced interaction #open\_options = {NetFS.kNAUIOptionKey: NetFS.kNAUIOptionNoUI} # Allow mounting sub-directories of root shares #mount\_options = {NetFS.kNetFSAllowSubMountsKey: True} # Mount! result, output = NetFS.NetFSMountURLSync(sh\_url, None, None, None, None, None, None) # Check if it worked if result != 0: raise Exception(&#39;Error mounting url &#34;%s&#34;: %s&#39; % (share\_path, output)) # Return the mountpath return str(output\[0\])[/edit] In a previous post, I discussed using ldapsearch to look up user data from AD. In this post we will use the user’s memberOf attribute to mount the appropriate file share. Some background on my use case for this. The company I work for has ~15,000 Windows computers in use bound to AD. When a user logs in, a GPO runs a batch file hosted on the domain controller’s file share. The batch file is basically a large case statementif in group A; then mount shares X and Y if in group B; then mount share ZI wanted to provide our Mac users with a similar experience. Read how below the break. Our Macs are not bound to Active Directory and we have historically had password confusion issues with network vs local passwords and keychain sync issues. To help this we have setup Apple’s excellent Enterprise Connect to help with that. When a Mac user is logged in and is on a network that can connect to our domain controllers (internal, VPN, etc), Enterprise Connect automatically retrieves a Kerberos Ticket Granting Ticket for the user and, optionally, confirms that the local password is in sync with the user’s AD password and prompts the user to fix things if necessary. Enterprise Connect can also mount file shares including the user’s home folder. This is handled on a per user basis or by profile. This works great if the user wants to mount a share they use, but it doesn’t scale well across many locations and OUs. One of the other benefits of Enterprise Connect is that it can run scripts based on a couple of triggers including a successful connection (i.e. the Mac is on the right network and a valid TGT has been granted). Note that Enterprise Connect can only run shell scripts this way. The script to run can be configured in the preference file or via profile with the key/value pair:connectionCompletedScriptPath /Library/Scripts/LogonFileShareMounter.wrapper.shThis script is stored locally on the client system and is what calls the script that will do the actual mounting. Before that though, we first make sure that we have the current version of the mounting script by checking an embedded serial number (similar to how DNS primary/secondaries work). The master copy of the mounting script is hosted on the same share as the Windows batch file. This way it can be updated whenever the Windows version is. As long as the serial number is updated, the Mac clients will get the updated version next time they successfully connect with Enterprise Connect. https://gist.github.com/ehemmete/618c96dc364d8a40723e30692617d2a8 The script starts by creating a directory if necessary and then mounting the file share where the master script is kept. The mount_smbfs line authenticates to the share with the Kerberos TGT from Enterprise Connect. Then as long as the master script can be found, the local serial is compared to the remote version. If the remote is newer, it is copied in place of the local copy. Then the share is unmounted and the local copy of the script is run. https://gist.github.com/ehemmete/2f893815bd03d96d89855feb4e9b7237 This script starts with the serial number that is compared against the master copy. Then the part between the ### lines comes straight from MacAdmin Slack member and frequent gist’er Froger/pudquick/MikeyMikey. His gist is referenced in the script and provides a python function for mounting network shares easily and in such as way that the system treats them the same as the Connect to Server dialog box. Then we get the user’s local account name, which in my environment is the same as their Active Directory name, and use ldapsearch to find their group memberships. Next we need to clean up the output. At the end we have an array of names of the groups this user is a member of. Now we start a case-like statement similar to the Window counter part.``` if ‘Group1’ in groups: mount_share(‘smb://server.my.domain.com/share’) mount_share(‘smb://server2.my.domain.com/share2’) if ‘Group2’ in groups: mount_share(‘smb://server3.my.domain.com/share’) etc…">
+  <meta itemprop="datePublished" content="2016-09-26T14:27:25+00:00">
+  <meta itemprop="dateModified" content="2016-09-26T14:27:25+00:00">
+  <meta itemprop="wordCount" content="765">
+  <meta itemprop="keywords" content="OS X General,Shell Script">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Mounting File Shares Based on AD Group Membership using Enterprise Connect">
+  <meta name="twitter:description" content="[edit] Apple changed something in macOS 10.13 High Sierra. The mount_share() function in the below python needs to be changed to set the open_options and mount_options to ‘None’. This can be done likedef mount\_share(share\_path): # Mounts a share at /Volumes, returns the mount point or raises an error sh\_url = CoreFoundation.CFURLCreateWithString(None, share\_path, None) # Set UI to reduced interaction #open\_options = {NetFS.kNAUIOptionKey: NetFS.kNAUIOptionNoUI} # Allow mounting sub-directories of root shares #mount\_options = {NetFS.kNetFSAllowSubMountsKey: True} # Mount! result, output = NetFS.NetFSMountURLSync(sh\_url, None, None, None, None, None, None) # Check if it worked if result != 0: raise Exception(&#39;Error mounting url &#34;%s&#34;: %s&#39; % (share\_path, output)) # Return the mountpath return str(output\[0\])[/edit] In a previous post, I discussed using ldapsearch to look up user data from AD. In this post we will use the user’s memberOf attribute to mount the appropriate file share. Some background on my use case for this. The company I work for has ~15,000 Windows computers in use bound to AD. When a user logs in, a GPO runs a batch file hosted on the domain controller’s file share. The batch file is basically a large case statementif in group A; then mount shares X and Y if in group B; then mount share ZI wanted to provide our Mac users with a similar experience. Read how below the break. Our Macs are not bound to Active Directory and we have historically had password confusion issues with network vs local passwords and keychain sync issues. To help this we have setup Apple’s excellent Enterprise Connect to help with that. When a Mac user is logged in and is on a network that can connect to our domain controllers (internal, VPN, etc), Enterprise Connect automatically retrieves a Kerberos Ticket Granting Ticket for the user and, optionally, confirms that the local password is in sync with the user’s AD password and prompts the user to fix things if necessary. Enterprise Connect can also mount file shares including the user’s home folder. This is handled on a per user basis or by profile. This works great if the user wants to mount a share they use, but it doesn’t scale well across many locations and OUs. One of the other benefits of Enterprise Connect is that it can run scripts based on a couple of triggers including a successful connection (i.e. the Mac is on the right network and a valid TGT has been granted). Note that Enterprise Connect can only run shell scripts this way. The script to run can be configured in the preference file or via profile with the key/value pair:connectionCompletedScriptPath /Library/Scripts/LogonFileShareMounter.wrapper.shThis script is stored locally on the client system and is what calls the script that will do the actual mounting. Before that though, we first make sure that we have the current version of the mounting script by checking an embedded serial number (similar to how DNS primary/secondaries work). The master copy of the mounting script is hosted on the same share as the Windows batch file. This way it can be updated whenever the Windows version is. As long as the serial number is updated, the Mac clients will get the updated version next time they successfully connect with Enterprise Connect. https://gist.github.com/ehemmete/618c96dc364d8a40723e30692617d2a8 The script starts by creating a directory if necessary and then mounting the file share where the master script is kept. The mount_smbfs line authenticates to the share with the Kerberos TGT from Enterprise Connect. Then as long as the master script can be found, the local serial is compared to the remote version. If the remote is newer, it is copied in place of the local copy. Then the share is unmounted and the local copy of the script is run. https://gist.github.com/ehemmete/2f893815bd03d96d89855feb4e9b7237 This script starts with the serial number that is compared against the master copy. Then the part between the ### lines comes straight from MacAdmin Slack member and frequent gist’er Froger/pudquick/MikeyMikey. His gist is referenced in the script and provides a python function for mounting network shares easily and in such as way that the system treats them the same as the Connect to Server dialog box. Then we get the user’s local account name, which in my environment is the same as their Active Directory name, and use ldapsearch to find their group memberships. Next we need to clean up the output. At the end we have an array of names of the groups this user is a member of. Now we start a case-like statement similar to the Window counter part.``` if ‘Group1’ in groups: mount_share(‘smb://server.my.domain.com/share’) mount_share(‘smb://server2.my.domain.com/share2’) if ‘Group2’ in groups: mount_share(‘smb://server3.my.domain.com/share’) etc…">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Mounting File Shares Based on AD Group Membership using Enterprise Connect</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2016-09-26T14:27:25Z">September 26, 2016</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>[edit] Apple changed something in macOS 10.13 High Sierra. The mount_share() function in the below python needs to be changed to set the open_options and mount_options to &lsquo;None&rsquo;. This can be done like<code>def mount\_share(share\_path): # Mounts a share at /Volumes, returns the mount point or raises an error sh\_url = CoreFoundation.CFURLCreateWithString(None, share\_path, None) # Set UI to reduced interaction #open\_options  = {NetFS.kNAUIOptionKey: NetFS.kNAUIOptionNoUI} # Allow mounting sub-directories of root shares #mount\_options = {NetFS.kNetFSAllowSubMountsKey: True} # Mount! result, output = NetFS.NetFSMountURLSync(sh\_url, None, None, None, None, None, None) # Check if it worked if result != 0: raise Exception('Error mounting url &quot;%s&quot;: %s' % (share\_path, output)) # Return the mountpath return str(output\[0\])</code>[/edit] In a <a href="https://sneakypockets.wordpress.com/2016/09/22/using-ldapsearch-to-get-ad-data/">previous post</a>, I discussed using <code>ldapsearch</code> to look up user data from AD.  In this post we will use the user&rsquo;s memberOf attribute to mount the appropriate file share. Some background on my use case for this.  The company I work for has ~15,000 Windows computers in use bound to AD.  When a user logs in, a GPO runs a batch file hosted on the domain controller&rsquo;s file share.  The batch file is basically a large case statement<code>if in group A; then     mount shares X and Y if in group B; then     mount share Z</code>I wanted to provide our Mac users with a similar experience.  Read how below the break. Our Macs are not bound to Active Directory and we have historically had password confusion issues with network vs local passwords and keychain sync issues.  To help this we have setup Apple&rsquo;s excellent <a href="https://jamfnation.jamfsoftware.com/discussion.html?id=17757">Enterprise Connect</a> to help with that. When a Mac user is logged in and is on a network that can connect to our domain controllers (internal, VPN, etc), Enterprise Connect automatically retrieves a Kerberos Ticket Granting Ticket for the user and, optionally, confirms that the local password is in sync with the user&rsquo;s AD password and prompts the user to fix things if necessary.  Enterprise Connect can also mount file shares including the user&rsquo;s home folder.  This is handled on a per user basis or by profile.  This works great if the user wants to mount a share they use, but it doesn&rsquo;t scale well across many locations and OUs. One of the other benefits of Enterprise Connect is that it can run scripts based on a couple of triggers including a successful connection (i.e. the Mac is on the right network and a valid TGT has been granted).  Note that Enterprise Connect can only run shell scripts this way. The script to run can be configured in the preference file or via profile with the key/value pair:<code>connectionCompletedScriptPath /Library/Scripts/LogonFileShareMounter.wrapper.sh</code>This script is stored locally on the client system and is what calls the script that will do the actual mounting.  Before that though, we first make sure that we have the current version of the mounting script by checking an embedded serial number (similar to how DNS primary/secondaries work).  The master copy of the mounting script is hosted on the same share as the Windows batch file.  This way it can be updated whenever the Windows version is.  As long as the serial number is updated, the Mac clients will get the updated version next time they successfully connect with Enterprise Connect. <a href="https://gist.github.com/ehemmete/618c96dc364d8a40723e30692617d2a8">https://gist.github.com/ehemmete/618c96dc364d8a40723e30692617d2a8</a> The script starts by creating a directory if necessary and then mounting the file share where the master script is kept.  The <code>mount_smbfs</code> line authenticates to the share with the Kerberos TGT  from Enterprise Connect.  Then as long as the master script can be found, the local serial is compared to the remote version.  If the remote is newer, it is copied in place of the local copy.  Then the share is unmounted and the local copy of the script is run. <a href="https://gist.github.com/ehemmete/2f893815bd03d96d89855feb4e9b7237">https://gist.github.com/ehemmete/2f893815bd03d96d89855feb4e9b7237</a> This script starts with the serial number that is compared against the master copy.  Then the part between the ### lines comes straight from MacAdmin Slack member and frequent gist&rsquo;er Froger/pudquick/MikeyMikey.  His <a href="https://gist.github.com/pudquick/1362a8908be01e23041d">gist</a> is referenced in the script and provides a python function for mounting network shares easily and in such as way that the system treats them the same as the Connect to Server dialog box. Then we get the user&rsquo;s local account name, which in my environment is the same as their Active Directory name, and use <code>ldapsearch</code> to find their group memberships.  Next we need to clean up the output.  At the end we have an array of names of the groups this user is a member of.  Now we start a case-like statement similar to the Window counter part.```
+if &lsquo;Group1&rsquo; in groups:
+mount_share(&lsquo;smb://server.my.domain.com/share&rsquo;)
+mount_share(&lsquo;smb://server2.my.domain.com/share2&rsquo;)
+if &lsquo;Group2&rsquo; in groups:
+mount_share(&lsquo;smb://server3.my.domain.com/share&rsquo;)
+etc&hellip;</p>
+<pre tabindex="0"><code class="language-On" data-lang="On"></code></pre><ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/os-x-general/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">OS X General</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/shell-script/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Shell Script</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/posts/using-ldapsearch-to-get-ad-data/">Using ldapsearch to get AD data</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/update-to-network-geektool-script/">Update to network GeekTool script</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/find-the-most-common-user-on-a-system/">Find the most common user on a system</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/macos-sierra-recovery-hd-changes/">macOS Sierra Recovery HD Changes</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/unhide-users-in-10-9-3/">Unhide /Users in 10.9.3</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/keyboard-shortcut-for-system-preferences/">Keyboard shortcut for System Preferences</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/control-if-a-window-opens-when-a-volume-mounts/">Control if a window opens when a volume mounts</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

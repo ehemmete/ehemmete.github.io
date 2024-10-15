@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+    
+      <link href="/tags/swift/index.xml" rel="alternate" type="application/rss+xml" title="My Thoughts" />
+      <link href="/tags/swift/index.xml" rel="feed" type="application/rss+xml" title="My Thoughts" />
+      
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/tags/swift/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/tags/swift/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Swift">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="website">
+
+  <meta itemprop="name" content="Swift">
+  <meta itemprop="datePublished" content="2023-07-03T09:52:00+00:00">
+  <meta itemprop="dateModified" content="2023-07-03T09:52:00+00:00">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Swift">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+
+  <header>
+    <div class="pb3-m pb6-l bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+      <div class="tc-l pv3 ph3 ph4-ns">
+        <h1 class="f2 f-subheadline-l fw2 light-silver mb0 lh-title">
+          Swift
+        </h1>
+        
+      </div>
+    </div>
+  </header>
+
+
+    <main class="pb7" role="main">
+      
+  <article class="cf pa3 pa4-m pa4-l">
+    <div class="measure-wide-l center f4 lh-copy nested-copy-line-height nested-links mid-gray">
+      <p>Below you will find pages that utilize the taxonomy term “Swift”</p>
+    </div>
+  </article>
+  <div class="mw8 center">
+    <section class="flex-ns flex-wrap justify-around mt5">
+      
+        <div class="relative w-100  mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/swift-mountshare-command-line-tool/" class="link black dim">
+        Swift mountshare command line tool
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      <p>There have been many times over the years of my career where I have wanted to script mounting a file share for a user. There are several ways to make this happen from manually adding a file share to a user&rsquo;s Login Items, using AppleScript, and scripting the <code>mount</code> command. Eventually I found and settled on using a python script with the python objc bridge from an <a href="https://gist.github.com/pudquick/1362a8908be01e23041d">old frogor/pudquick gist</a>. This worked great with the built in python on macOS and uses the same bits of the OS that the Connect to Server… dialog does. I was able to <a href="https://sneakypockets.wordpress.com/2016/09/26/mounting-file-shares-based-on-ad-group-membership-using-enterprise-connect/">automatically mount shares based on AD group</a> at a previous job using this script. Eventually Apple stopped including python in macOS, so I had to <a href="https://github.com/macadmins/python">install another one</a>. There were some modifications needed to make it work with python 3 (see the comments on the gist) and installing python everywhere for this one thing seemed like overkill. So I started working on a Swift implementation using <a href="https://swiftpackageindex.com/apple/swift-argument-parser/1.2.2/documentation/argumentparser">swift argument parser</a>. Since the python script calls into the system a lot of the pieces were already laid out and then I found a mosen <a href="https://gist.github.com/mosen/2ddf85824fbb5564aef527b60beb4669">gist that laid out basically all the options and proper terms</a>.</p>
+    </div>
+    <a href="/posts/swift-mountshare-command-line-tool/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+  </div>
+</div>
+
+        </div>
+      
+        <div class="relative w-100  mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/shell-to-swift-with-a-bit-of-python/" class="link black dim">
+        Shell to Swift with a bit of Python
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      <p>This is probably the first of a couple of posts about this project. There are a couple of things I learned I want to expand on, but don&rsquo;t want to make this too long. So this will be an overview of the project. For years I have had a <a href="https://sneakypockets.wordpress.com/2015/05/05/update-to-network-geektool-script/">shell script</a> that collected some network info and it was displayed on my desktop using <a href="http://mutablecode.com/apps/nerdtool.html">NerdTool</a> and then <a href="https://www.tynsoe.org/v2/geektool/">GeekTool</a>. While testing macOS Catalina betas, GeekTool hasn&rsquo;t been working for me. The other concern with these options is that they run the shell script on a schedule which can be much to frequent or not frequent enough.  So I <a href="https://github.com/ehemmete/NetworkInfoGUI">rewrote it with Xcode in Swift</a>. I have <a href="https://sneakypockets.wordpress.com/2019/04/15/using-a-swift-app-to-get-rid-of-lots-of-applescript-dialogs/">recently been doing more with Swift</a> and was inspired by <a href="https://psumac2019.sched.com/event/KQo3/swift-xcode-an-app-and-you">Macshome&rsquo;s workshop at PSU MacAdmin 2019</a>. In that workshop he showed off a nice Swift function for running shell scripts (he planned to opensource the workshop code, so I will link to it when I can). He also demonstrated how to store functions in one file and reference them in another which made for much cleaner and transportable code. I started with that and reproduced my network info output and that was working well. At this point the program was a cli command. <img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/07/screen-shot-2019-07-26-at-8.38.25-pm-1.png" alt="Screen Shot 2019-07-26 at 8.38.25 PM.png">While it worked well in the terminal, I wanted to have the output available at a glance. I created a new Xcode project to create a GUI version. Because I had all my functions in a separate NetworkInfo.swift file, I was able to drag that into the GUI project and call them from there.  The main parts of the project now relied on ​​<code>​networksetup</code> to find all the network services and get the ip addresses of the active services and <a href="https://github.com/ehemmete/NetworkInfoGUI/blob/master/NetworkFunctions(shell-based).swift">looked like this</a>. Then I was further inspired by <a href="https://macadmins.slack.com/archives/C056UTQ3M/p1563909962029100">zakes</a> and <a href="https://macadmins.slack.com/archives/C056UTQ3M/p1563914551039800">frogor</a> in #python in the <a href="http://macadmins.org">MacAdmin Slack</a> to try to use more native calls instead of shell commands.  They were using PyObjC to call native macOS methods, so it was pretty straight forward to use them in Swift after a bit of reading the documentation. I also got some help from <a href="https://macadmins.slack.com/archives/C0688BNEM/p1563637834003600">bp</a> in #swift on getting nicer output from some of the methods. At this point, I could print all the output I wanted nicely, but only when the application is launched. I found <a href="https://developer.apple.com/documentation/network/nwpathmonitor">NWPathMonitor in Apple&rsquo;s documentation</a> and with some trial and error, I was able to get the function to update the UI whenever the network state on the Mac changed.<img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/07/screen-shot-2019-07-26-at-8.56.45-pm.png" alt="Screen Shot 2019-07-26 at 8.56.45 PM.png"> By moving from shell calls to native methods, the code runs much faster.  Using <code>time</code> to compare the two commands, the ProcessRunner version runs in 1.155s while the native command version runs in .243s. Certainly not a huge deal for something this simple, but shows the benefit of using the native tools when possible. Another benefit is that by using a native wrapping label in a standard window, the network info is now selectable and copyable. In another post, I plan to describe the structure of the project and how it monitors for network changes.  I also hope to figure out how to use the macOS native controls to allow a user to adjust the fonts, colors, and opacity of the display.  Finally, I would like to include the cli command in the GUI bundle, so it can be called from Terminal if needed.</p>
+    </div>
+    <a href="/posts/shell-to-swift-with-a-bit-of-python/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+  </div>
+</div>
+
+        </div>
+      
+        <div class="relative w-100  mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/using-a-swift-app-to-get-rid-of-lots-of-applescript-dialogs-comments/" class="link black dim">
+        Using a Swift app to get rid of lots of AppleScript dialogs
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      <h4 id="heading"></h4>
+<p><a href="https://www.arminip.com/" title="mtentor@arminip.com">Marty Tentor</a> - <!-- raw HTML omitted -->Feb 5, 2021<!-- raw HTML omitted --></p>
+<p>Thanks for the example. I have a similar challenge, getting a one window gui for applescipt. Just want to confirm that you are using Swift to generate text files and then running Applescript to get the data from the text files and running the real work on the targeted application. Is the Applescript being run separately,(called by the user) or is the Applescript call coming from within the Swift program?</p>
+    </div>
+    <a href="/posts/using-a-swift-app-to-get-rid-of-lots-of-applescript-dialogs-comments/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+  </div>
+</div>
+
+        </div>
+      
+        <div class="relative w-100  mb4 bg-white">
+          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
+  <div class="bg-white mb3 pa4 gray overflow-hidden">
+    <span class="f6 db">Posts</span>
+    <h1 class="f3 near-black">
+      <a href="/posts/using-a-swift-app-to-get-rid-of-lots-of-applescript-dialogs/" class="link black dim">
+        Using a Swift app to get rid of lots of AppleScript dialogs
+      </a>
+    </h1>
+    <div class="nested-links f5 lh-copy nested-copy-line-height">
+      <p>There was recently a discussion in #bash in the <a href="https://macadmins.org">MacAdmin Slack</a> about better ways to handle multiple dialogs for gathering info from users or techs.  In my company&rsquo;s provisioning process we want to collect a number of things to be picked up by our inventory system (BigFix).  This started with a set of AppleScript Display Dialogs.</p>
+<p><img src="https://sneakypockets.wordpress.com/wp-content/uploads/2019/04/applescriptpopups.2019-04-13-12_40_20.gif" alt="AppleScriptPopUps.2019-04-13 12_40_20.gif"></p>
+<p>This is not a great experience and gets worse as we try to make it less error prone (do you see the mistake?). To make this better for our techs, I wrote a relatively simple Swift application.  I didn&rsquo;t/don&rsquo;t have much Swift experience (just playing around in Playgrounds, a few simple tutorials), so I can&rsquo;t say this is the &ldquo;right&rdquo; way to do this, but it works for me/our process.</p>
+    </div>
+    <a href="/posts/using-a-swift-app-to-get-rid-of-lots-of-applescript-dialogs/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
+  </div>
+</div>
+
+        </div>
+      
+    </section>
+  </div>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

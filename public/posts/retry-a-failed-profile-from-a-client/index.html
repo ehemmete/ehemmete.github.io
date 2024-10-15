@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Retry a failed Profile from a client | My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="My organization is working on moving to a DEP based workflow, but in the meantime we are getting computers that have 10.13.4 preinstalled on them. We use JAMF Imaging along with the Apple provided OS to put our software on the Mac and enroll it into our JAMF JSS. After the build process the user can log in, but in 10.13.4 they are shown unapproved kernel extension warnings because our MDM Profile is not yet approved. Once they approve the MDM Profile, our KEXT Whitelist still needs to be pushed again. I can manually do this from the JAMF console by choosing to edit the profile, then save it immediately. When prompted, I have it push to newly assigned clients only and it doesn&rsquo;t bother the several hundred that already have it. I recently figured out how to prompt for this from the client end with the JAMF API. Each JAMF configuration profile (osxconfigurationprofiles in API terms) has a redploy_on_update key that can take a value of Newly Assigned. Using the API to PUT this value seems to trigger the same behaviour as the edit/save/assign to new devices process. So now from the client (or Self Service) I can trigger the KEXT profile repush as needed while still not touching all the devices that are already happy. The API call looks like:curl -sku &quot;$apiUser&quot;:&quot;$apiPass&quot; -H &quot;Content-Type: application/xml&quot; -d &quot;&lt;os\_x\_configuration\_profile&gt;&lt;general&gt;&lt;redeploy\_on\_update&gt;Newly Assigned&lt;/redeploy\_on\_update&gt;&lt;/general&gt;&lt;/os\_x\_configuration\_profile&gt;&quot; https://jss.company.com:8443/JSSResource/osxconfigurationprofiles/id/&quot;$id&quot; -X PUTFor the API user, I created a new local JSS account that has Update privileges for macOS Configuration Profiles (note the difference between the API and the GUI). See https://www.rderewianko.com/hardcoding_is_bad/ for some good ideas on passing the username/password/JSS name in a script. Lastly we need the id of the configuration profile we want to repush. This can found in the URL of the profile in the web GUI or via the API.  or  or```
+curl -sku &ldquo;$apiUser&rdquo;:&quot;$apiPass&quot; https://jss.company.com:8443/JSSResource/osxconfigurationprofiles -X GET">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/posts/retry-a-failed-profile-from-a-client/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/posts/retry-a-failed-profile-from-a-client/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Retry a failed Profile from a client">
+  <meta property="og:description" content="My organization is working on moving to a DEP based workflow, but in the meantime we are getting computers that have 10.13.4 preinstalled on them. We use JAMF Imaging along with the Apple provided OS to put our software on the Mac and enroll it into our JAMF JSS. After the build process the user can log in, but in 10.13.4 they are shown unapproved kernel extension warnings because our MDM Profile is not yet approved. Once they approve the MDM Profile, our KEXT Whitelist still needs to be pushed again. I can manually do this from the JAMF console by choosing to edit the profile, then save it immediately. When prompted, I have it push to newly assigned clients only and it doesn’t bother the several hundred that already have it. I recently figured out how to prompt for this from the client end with the JAMF API. Each JAMF configuration profile (osxconfigurationprofiles in API terms) has a redploy_on_update key that can take a value of Newly Assigned. Using the API to PUT this value seems to trigger the same behaviour as the edit/save/assign to new devices process. So now from the client (or Self Service) I can trigger the KEXT profile repush as needed while still not touching all the devices that are already happy. The API call looks like:curl -sku &#34;$apiUser&#34;:&#34;$apiPass&#34; -H &#34;Content-Type: application/xml&#34; -d &#34;&lt;os\_x\_configuration\_profile&gt;&lt;general&gt;&lt;redeploy\_on\_update&gt;Newly Assigned&lt;/redeploy\_on\_update&gt;&lt;/general&gt;&lt;/os\_x\_configuration\_profile&gt;&#34; https://jss.company.com:8443/JSSResource/osxconfigurationprofiles/id/&#34;$id&#34; -X PUTFor the API user, I created a new local JSS account that has Update privileges for macOS Configuration Profiles (note the difference between the API and the GUI). See https://www.rderewianko.com/hardcoding_is_bad/ for some good ideas on passing the username/password/JSS name in a script. Lastly we need the id of the configuration profile we want to repush. This can found in the URL of the profile in the web GUI or via the API. or or``` curl -sku “$apiUser”:&#34;$apiPass&#34; https://jss.company.com:8443/JSSResource/osxconfigurationprofiles -X GET">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2018-05-21T21:09:13+00:00">
+    <meta property="article:modified_time" content="2018-05-21T21:09:13+00:00">
+    <meta property="article:tag" content="Uncategorized">
+
+  <meta itemprop="name" content="Retry a failed Profile from a client">
+  <meta itemprop="description" content="My organization is working on moving to a DEP based workflow, but in the meantime we are getting computers that have 10.13.4 preinstalled on them. We use JAMF Imaging along with the Apple provided OS to put our software on the Mac and enroll it into our JAMF JSS. After the build process the user can log in, but in 10.13.4 they are shown unapproved kernel extension warnings because our MDM Profile is not yet approved. Once they approve the MDM Profile, our KEXT Whitelist still needs to be pushed again. I can manually do this from the JAMF console by choosing to edit the profile, then save it immediately. When prompted, I have it push to newly assigned clients only and it doesn’t bother the several hundred that already have it. I recently figured out how to prompt for this from the client end with the JAMF API. Each JAMF configuration profile (osxconfigurationprofiles in API terms) has a redploy_on_update key that can take a value of Newly Assigned. Using the API to PUT this value seems to trigger the same behaviour as the edit/save/assign to new devices process. So now from the client (or Self Service) I can trigger the KEXT profile repush as needed while still not touching all the devices that are already happy. The API call looks like:curl -sku &#34;$apiUser&#34;:&#34;$apiPass&#34; -H &#34;Content-Type: application/xml&#34; -d &#34;&lt;os\_x\_configuration\_profile&gt;&lt;general&gt;&lt;redeploy\_on\_update&gt;Newly Assigned&lt;/redeploy\_on\_update&gt;&lt;/general&gt;&lt;/os\_x\_configuration\_profile&gt;&#34; https://jss.company.com:8443/JSSResource/osxconfigurationprofiles/id/&#34;$id&#34; -X PUTFor the API user, I created a new local JSS account that has Update privileges for macOS Configuration Profiles (note the difference between the API and the GUI). See https://www.rderewianko.com/hardcoding_is_bad/ for some good ideas on passing the username/password/JSS name in a script. Lastly we need the id of the configuration profile we want to repush. This can found in the URL of the profile in the web GUI or via the API. or or``` curl -sku “$apiUser”:&#34;$apiPass&#34; https://jss.company.com:8443/JSSResource/osxconfigurationprofiles -X GET">
+  <meta itemprop="datePublished" content="2018-05-21T21:09:13+00:00">
+  <meta itemprop="dateModified" content="2018-05-21T21:09:13+00:00">
+  <meta itemprop="wordCount" content="312">
+  <meta itemprop="keywords" content="Uncategorized">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Retry a failed Profile from a client">
+  <meta name="twitter:description" content="My organization is working on moving to a DEP based workflow, but in the meantime we are getting computers that have 10.13.4 preinstalled on them. We use JAMF Imaging along with the Apple provided OS to put our software on the Mac and enroll it into our JAMF JSS. After the build process the user can log in, but in 10.13.4 they are shown unapproved kernel extension warnings because our MDM Profile is not yet approved. Once they approve the MDM Profile, our KEXT Whitelist still needs to be pushed again. I can manually do this from the JAMF console by choosing to edit the profile, then save it immediately. When prompted, I have it push to newly assigned clients only and it doesn’t bother the several hundred that already have it. I recently figured out how to prompt for this from the client end with the JAMF API. Each JAMF configuration profile (osxconfigurationprofiles in API terms) has a redploy_on_update key that can take a value of Newly Assigned. Using the API to PUT this value seems to trigger the same behaviour as the edit/save/assign to new devices process. So now from the client (or Self Service) I can trigger the KEXT profile repush as needed while still not touching all the devices that are already happy. The API call looks like:curl -sku &#34;$apiUser&#34;:&#34;$apiPass&#34; -H &#34;Content-Type: application/xml&#34; -d &#34;&lt;os\_x\_configuration\_profile&gt;&lt;general&gt;&lt;redeploy\_on\_update&gt;Newly Assigned&lt;/redeploy\_on\_update&gt;&lt;/general&gt;&lt;/os\_x\_configuration\_profile&gt;&#34; https://jss.company.com:8443/JSSResource/osxconfigurationprofiles/id/&#34;$id&#34; -X PUTFor the API user, I created a new local JSS account that has Update privileges for macOS Configuration Profiles (note the difference between the API and the GUI). See https://www.rderewianko.com/hardcoding_is_bad/ for some good ideas on passing the username/password/JSS name in a script. Lastly we need the id of the configuration profile we want to repush. This can found in the URL of the profile in the web GUI or via the API. or or``` curl -sku “$apiUser”:&#34;$apiPass&#34; https://jss.company.com:8443/JSSResource/osxconfigurationprofiles -X GET">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Retry a failed Profile from a client</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2018-05-21T21:09:13Z">May 21, 2018</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>My organization is working on moving to a DEP based workflow, but in the meantime we are getting computers that have 10.13.4 preinstalled on them. We use JAMF Imaging along with the Apple provided OS to put our software on the Mac and enroll it into our JAMF JSS. After the build process the user can log in, but in 10.13.4 they are shown unapproved kernel extension warnings because our MDM Profile is not yet approved. Once they approve the MDM Profile, our KEXT Whitelist still needs to be pushed again. I can manually do this from the JAMF console by choosing to edit the profile, then save it immediately. When prompted, I have it push to newly assigned clients only and it doesn&rsquo;t bother the several hundred that already have it. I recently figured out how to prompt for this from the client end with the JAMF API. Each JAMF configuration profile (osxconfigurationprofiles in API terms) has a redploy_on_update key that can take a value of Newly Assigned. Using the API to PUT this value seems to trigger the same behaviour as the edit/save/assign to new devices process. So now from the client (or Self Service) I can trigger the KEXT profile repush as needed while still not touching all the devices that are already happy. The API call looks like:<code>curl -sku &quot;$apiUser&quot;:&quot;$apiPass&quot; -H &quot;Content-Type: application/xml&quot; -d &quot;&lt;os\_x\_configuration\_profile&gt;&lt;general&gt;&lt;redeploy\_on\_update&gt;Newly Assigned&lt;/redeploy\_on\_update&gt;&lt;/general&gt;&lt;/os\_x\_configuration\_profile&gt;&quot; https://jss.company.com:8443/JSSResource/osxconfigurationprofiles/id/&quot;$id&quot; -X PUT</code>For the API user, I created a new local JSS account that has Update privileges for macOS Configuration Profiles (note the difference between the API and the GUI). See <a href="https://www.rderewianko.com/hardcoding_is_bad/">https://www.rderewianko.com/hardcoding_is_bad/</a> for some good ideas on passing the username/password/JSS name in a script. Lastly we need the id of the configuration profile we want to repush. This can found in the URL of the profile in the web GUI or via the API. <img src="https://sneakypockets.wordpress.com/wp-content/uploads/2018/05/screen-shot-2018-05-21-at-3-28-16-pm.png" alt="Screen Shot 2018-05-21 at 3.28.16 PM.png"> or <img src="https://sneakypockets.wordpress.com/wp-content/uploads/2018/05/screen-shot-2018-05-21-at-3-28-52-pm.png" alt="Screen Shot 2018-05-21 at 3.28.52 PM.png"> or```
+curl -sku &ldquo;$apiUser&rdquo;:&quot;$apiPass&quot; <a href="https://jss.company.com:8443/JSSResource/osxconfigurationprofiles">https://jss.company.com:8443/JSSResource/osxconfigurationprofiles</a> -X GET</p>
+<pre tabindex="0"><code class="language-I'm" data-lang="I'm"></code></pre><ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/uncategorized/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Uncategorized</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/posts/filecruiser-where-are-my-files/">FileCruiser - Where are my files?</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/network-services-and-ips/">Network Services and IPs</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

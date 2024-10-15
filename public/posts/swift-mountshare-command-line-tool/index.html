@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Swift mountshare command line tool | My Thoughts</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="There have been many times over the years of my career where I have wanted to script mounting a file share for a user. There are several ways to make this happen from manually adding a file share to a user&rsquo;s Login Items, using AppleScript, and scripting the mount command. Eventually I found and settled on using a python script with the python objc bridge from an old frogor/pudquick gist. This worked great with the built in python on macOS and uses the same bits of the OS that the Connect to Server… dialog does. I was able to automatically mount shares based on AD group at a previous job using this script. Eventually Apple stopped including python in macOS, so I had to install another one. There were some modifications needed to make it work with python 3 (see the comments on the gist) and installing python everywhere for this one thing seemed like overkill. So I started working on a Swift implementation using swift argument parser. Since the python script calls into the system a lot of the pieces were already laid out and then I found a mosen gist that laid out basically all the options and proper terms.">
+    <meta name="generator" content="Hugo 0.135.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/posts/swift-mountshare-command-line-tool/">
+    
+
+    <meta property="og:url" content="http://localhost:1313/posts/swift-mountshare-command-line-tool/">
+  <meta property="og:site_name" content="My Thoughts">
+  <meta property="og:title" content="Swift mountshare command line tool">
+  <meta property="og:description" content="There have been many times over the years of my career where I have wanted to script mounting a file share for a user. There are several ways to make this happen from manually adding a file share to a user’s Login Items, using AppleScript, and scripting the mount command. Eventually I found and settled on using a python script with the python objc bridge from an old frogor/pudquick gist. This worked great with the built in python on macOS and uses the same bits of the OS that the Connect to Server… dialog does. I was able to automatically mount shares based on AD group at a previous job using this script. Eventually Apple stopped including python in macOS, so I had to install another one. There were some modifications needed to make it work with python 3 (see the comments on the gist) and installing python everywhere for this one thing seemed like overkill. So I started working on a Swift implementation using swift argument parser. Since the python script calls into the system a lot of the pieces were already laid out and then I found a mosen gist that laid out basically all the options and proper terms.">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2023-07-03T09:52:00+00:00">
+    <meta property="article:modified_time" content="2023-07-03T09:52:00+00:00">
+    <meta property="article:tag" content="MacOS">
+    <meta property="article:tag" content="Swift">
+
+  <meta itemprop="name" content="Swift mountshare command line tool">
+  <meta itemprop="description" content="There have been many times over the years of my career where I have wanted to script mounting a file share for a user. There are several ways to make this happen from manually adding a file share to a user’s Login Items, using AppleScript, and scripting the mount command. Eventually I found and settled on using a python script with the python objc bridge from an old frogor/pudquick gist. This worked great with the built in python on macOS and uses the same bits of the OS that the Connect to Server… dialog does. I was able to automatically mount shares based on AD group at a previous job using this script. Eventually Apple stopped including python in macOS, so I had to install another one. There were some modifications needed to make it work with python 3 (see the comments on the gist) and installing python everywhere for this one thing seemed like overkill. So I started working on a Swift implementation using swift argument parser. Since the python script calls into the system a lot of the pieces were already laid out and then I found a mosen gist that laid out basically all the options and proper terms.">
+  <meta itemprop="datePublished" content="2023-07-03T09:52:00+00:00">
+  <meta itemprop="dateModified" content="2023-07-03T09:52:00+00:00">
+  <meta itemprop="wordCount" content="602">
+  <meta itemprop="keywords" content="MacOS,Swift">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Swift mountshare command line tool">
+  <meta name="twitter:description" content="There have been many times over the years of my career where I have wanted to script mounting a file share for a user. There are several ways to make this happen from manually adding a file share to a user’s Login Items, using AppleScript, and scripting the mount command. Eventually I found and settled on using a python script with the python objc bridge from an old frogor/pudquick gist. This worked great with the built in python on macOS and uses the same bits of the OS that the Connect to Server… dialog does. I was able to automatically mount shares based on AD group at a previous job using this script. Eventually Apple stopped including python in macOS, so I had to install another one. There were some modifications needed to make it work with python 3 (see the comments on the gist) and installing python everywhere for this one thing seemed like overkill. So I started working on a Swift implementation using swift argument parser. Since the python script calls into the system a lot of the pieces were already laid out and then I found a mosen gist that laid out basically all the options and proper terms.">
+
+	
+  </head>
+
+  <body class="ma0 avenir bg-near-white">
+
+    
+   
+  
+
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        My Thoughts
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked ttu">
+          
+        Posts
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1">Swift mountshare command line tool</h1>
+      
+      
+      
+      <time class="f6 mv4 dib tracked" datetime="2023-07-03T09:52:00Z">July 3, 2023</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><p>There have been many times over the years of my career where I have wanted to script mounting a file share for a user. There are several ways to make this happen from manually adding a file share to a user&rsquo;s Login Items, using AppleScript, and scripting the <code>mount</code> command. Eventually I found and settled on using a python script with the python objc bridge from an <a href="https://gist.github.com/pudquick/1362a8908be01e23041d">old frogor/pudquick gist</a>. This worked great with the built in python on macOS and uses the same bits of the OS that the Connect to Server… dialog does. I was able to <a href="https://sneakypockets.wordpress.com/2016/09/26/mounting-file-shares-based-on-ad-group-membership-using-enterprise-connect/">automatically mount shares based on AD group</a> at a previous job using this script. Eventually Apple stopped including python in macOS, so I had to <a href="https://github.com/macadmins/python">install another one</a>. There were some modifications needed to make it work with python 3 (see the comments on the gist) and installing python everywhere for this one thing seemed like overkill. So I started working on a Swift implementation using <a href="https://swiftpackageindex.com/apple/swift-argument-parser/1.2.2/documentation/argumentparser">swift argument parser</a>. Since the python script calls into the system a lot of the pieces were already laid out and then I found a mosen <a href="https://gist.github.com/mosen/2ddf85824fbb5564aef527b60beb4669">gist that laid out basically all the options and proper terms</a>.</p>
+<p>With those pieces I was able to create <a href="https://github.com/ehemmete/mountshare">mountshare</a>. This is a Swift command line tool that covers all the options I can find for mounting file shares from the command line. It ties into the system like Connect to Server… so things like storing file share authentication in the Keychain or using Kerberos authentication work as expected. There are options to make the share read only (‐‐readonly), not show up in the Finder (‐‐nobrowse), or connect as guest (‐‐guest). The help lays out all the options, but the most basic usage is <code>mountshare smb://server.domain.tld/share</code>.</p>
+<pre tabindex="0"><code>OVERVIEW: Mount network shares the way &#34;Connect to Server…&#34; does
+
+The default usage assumes the needed credentials are in the user&#39;s keychain or the server uses Kerberos.
+Otherwise, a username and password can be passed in, or the system can prompt for authentication with a GUI window.
+The various mounting and opening options are available as command line flags.
+This command should be run as the user that is mounting the share.
+
+USAGE: mountshare [&lt;options&gt;] &lt;server-share-path&gt;
+
+ARGUMENTS:
+  &lt;server-share-path&gt;     The full path to the share to mount i.e. &#34;smb://server.domain.tld/share&#34;
+
+OPTIONS:
+  -v, --verbose           Print success or error message to STDOUT
+  -u, --username &lt;username&gt;
+                          If necessary, specify a username to mount the share as.
+  -p, --password &lt;password&gt;
+                          Works with username to mount the share as a different user
+  --local-path &lt;local-path&gt;
+                          To change the local mountpoint.  The default is /Volumes/
+  --nobrowse              No browsable data here (see &lt;sys/mount.h&gt;)
+  --readonly              A read-only mount (see &lt;sys/mount.h&gt;)
+  --allow-sub-mounts      Allow a mount from a dir beneath the share point
+  --disable-soft-mount    Prevent mounting with &#34;soft&#34; failure semantics
+  --mount-at-directory    Mount on the specified mountpath instead of below it
+  --guest                 Login as a guest user
+  --allow-loopback        Allow a loopback mount
+  --allow-auth-dialog     The default GUI authentication window option, displays if needed
+  --no-auth-dialog        Do not allow a GUI authentication window
+  --force-auth-dialog     Force a GUI authentication window
+  --version               Show the version.
+  -h, --help              Show help information.
+</code></pre><p>The code and installer are <a href="https://github.com/ehemmete/mountshare">available on my GitHub</a>. The installer is under the Releases area on the right. The package is signed and notarized and puts the tool in <code>/usr/local/bin/mountshare</code>.</p>
+<p>A note about usage. The tool is meant to run as the user that is mounting the share. So if you are trying to automate mounting behind the scenes, take a look at running a script on connection via the <a href="https://support.apple.com/guide/deployment/kerberos-single-sign-on-extension-depe6a1cda64/web">Kerberos-SSO extension</a>, <a href="https://github.com/macadmins/outset">Outset</a>&rsquo;s login-every option, or <a href="https://scriptingosx.com/2020/08/running-a-command-as-another-user/">ScriptingOSX&rsquo;s post on running as a user</a>.</p>
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/macos/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">MacOS</a>
+   </li>
+  
+   <li class="list di">
+     <a href="/tags/swift/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">Swift</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+  <div class="bg-light-gray pa3 nested-list-reset nested-copy-line-height nested-links">
+    <p class="f5 b mb3">Related</p>
+    <ul class="pa0 list">
+	   
+	     <li  class="mb2">
+          <a href="/posts/shell-to-swift-with-a-bit-of-python/">Shell to Swift with a bit of Python</a>
+        </li>
+	    
+	     <li  class="mb2">
+          <a href="/posts/using-a-swift-app-to-get-rid-of-lots-of-applescript-dialogs/">Using a Swift app to get rid of lots of AppleScript dialogs</a>
+        </li>
+	    
+    </ul>
+</div>
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://localhost:1313/" >
+    &copy;  Eric Hemmeter 2024 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>
