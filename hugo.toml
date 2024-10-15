@@ -1,4 +1,6 @@
 baseURL = 'https://example.org/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'My Thoughts'
+[params]
+  subtitle = 'Mostly Mac, so other stuff'
 theme = 'ananke'
